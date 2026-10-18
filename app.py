@@ -241,7 +241,7 @@ tab_names = [
     "Gráficos",
     "Nuevo reactivo",
 ]
-tabs = {k: v for k, v in zip(tab_names, st.tabs(tab_names))}
+tabs = {k: v for k, v in zip(tab_names, st.tabs(tab_names, key="active_tab", on_change="rerun"))}
 
 with tabs["Inventario"]:
     filtered_df = df.copy()
@@ -368,9 +368,15 @@ with tabs["Inventario"]:
             mime="text/csv",
         )
 
+        if "order_round" not in st.session_state:
+            st.session_state.order_round = 0
+
+        def increase_order_round():
+            st.session_state.order_round += 1
+
         # guarda los valores de ID de reactivo de las filas seleccionadas
         selected_id = filtered_df.loc[event.selection.rows, "id"]
-        if len(selected_id) > 0 and st.button("🛒 Añadir al pedido"):
+        if len(selected_id) > 0 and st.button("🛒 Añadir al pedido", on_click=increase_order_round):
             new_order_id = set(selected_id) - st.session_state.order_id
             st.session_state.order_id.update(new_order_id)
 
@@ -410,38 +416,34 @@ with tabs["Pedido"]:
     if "order" not in st.session_state:
         st.session_state["order"] = {}  # {"R003" : 2, "R017" : 1}
 
-    if "order_round" not in st.session_state:
-        st.session_state["order_round"] = 0
-
     if "order_df" not in st.session_state:
         st.session_state["order_df"] = pd.DataFrame()
 
-    # columnas a mostrar en el pedido
-    # id, reactivo, fórmula, unidades_stock,
-
     if len(st.session_state.order_id) == 0:
         st.markdown("### Aún no se han añadido artículos al carrito de compra.")
+
     else:
-        # nueva ronda de pedido
-        st.session_state.order_round += 1
 
         # inicializar las unidades_pedido a 1
         for id_ in st.session_state.order_id:
             st.session_state.order.setdefault(id_, 1)
 
-        st.session_state.order_df = df.loc[df["id"].isin(st.session_state.order_id), :].copy()
+        # crear order_df
+        st.session_state.order_df = df.set_index("id").loc[list(st.session_state.order_id)].copy().reset_index()
         
-        # puebla las cantidades de cada reactivo a partir del dict order
+        # puebla las cantidades de cada reactivo a partir del dict order {id_reactivo : qty}
+        # si es la primera vez, se inician a 1
         st.session_state.order_df["unidades_pedido"] = (st.session_state.order_df["id"]
                                                         .map(st.session_state.order) )
 
-        st.session_state.order_df["coste_total"] = (
-            st.session_state.order_df.unidades_pedido
-            * st.session_state.order_df.precio_unitario
-        )
+        # cálculo de los subtotales
+        st.session_state.order_df["coste_subtotal"] = (st.session_state.order_df.unidades_pedido * 
+                                                       st.session_state.order_df.precio_unitario )
 
         # resetea el índice
         st.session_state.order_df.reset_index(drop=True, inplace=True)
+
+        # muestra los reactivos añadidos al carro
         cols_to_show = [
             "reactivo",
             "formula",
@@ -463,37 +465,44 @@ with tabs["Pedido"]:
                 "precio_unitario": st.column_config.NumberColumn(
                     "Precio unitario", format="%.2f €"
                 ),
-                "coste_total": st.column_config.NumberColumn(
-                    label="Coste total", format="%.2f €"
-                ),
-                "unidades_pedido": st.column_config.SelectboxColumn(
-                    label="Unidades pedido",
-                    help="Haz doble clic en la celda para abrir el desplegable y seleccionar las unidades",
-                    options=list(range(21)),
-                    required=True,
-                ),
+                "unidades_pedido": "Unidades pedido",
             },
             key="order_table",
         )
-
+        
         # headers
-        h1, h2, h3, h4 = st.columns([1, 1, 1, 1])
+        h1, h2, h3, h4, h5 = st.columns([1, 1, 1, 1, 1])
         h1.markdown("**Reactivo**")
         h2.markdown("**Unidades**")
         h3.markdown("**Precio unitario**")
         h4.markdown("**Subtotal**")
+        h5.markdown("**Eliminarl**")
         st.divider()
 
         def update_quantities(id_, index):
+            # order -> {id_reactivo : cantidad}
             st.session_state.order[id_] = st.session_state[f"qty_{index}"]
 
+        def remove_item(id_):
+            st.session_state.order_id.discard(id_)
+            del st.session_state.order[id_]
+
+        def remove_order():
+            st.session_state.order_round = 0
+            del st.session_state["order_df"]
+            del st.session_state["order_id"]
+            # mover a Inventario
+            st.session_state.active_tab= "Inventario"
+            st.toast("Pedido eliminado", icon="🗑️")
+
         for index, row in st.session_state.order_df.iterrows():
-            col1, col2, col3, col4 = st.columns(
-                [1, 1, 1, 1], vertical_alignment="center"
+            col1, col2, col3, col4, col5 = st.columns(
+                [1, 1, 1, 1, 1], vertical_alignment="center"
             )
 
             col1.write(row.reactivo)  # reactivo
-            col2.number_input(  # unidades
+            # unidades
+            col2.number_input(  
                 label="",
                 min_value=1,
                 value=row.unidades_pedido,
@@ -507,6 +516,8 @@ with tabs["Pedido"]:
                 f"{row.precio_unitario * row.unidades_pedido:.2f} €"
             )  # coste_total
 
+            col5.button(label = "🗑️", on_click=remove_item, args=(row.id,),
+                        key = f"borrar_{index}")
             st.divider()
 
         with st.container(
@@ -515,6 +526,9 @@ with tabs["Pedido"]:
             # KPI con total pedido
             st.metric(
                 label="Coste total del pedido",
-                value=f"{st.session_state.order_df.coste_total.sum():.2f} €",
+                value=f"{st.session_state.order_df.coste_subtotal.sum():.2f} €",
                 width="content",
             )
+
+            # botón de limpieza del pedido
+            st.button("Borrar pedido 🗑️", on_click=remove_order)
