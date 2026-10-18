@@ -5,6 +5,165 @@ import time
 
 st.set_page_config(page_title="Mi app", page_icon="🧪", layout="wide")
 
+# CSS
+st.markdown(
+    """
+    <style>
+    /* Contenedor principal y tipografía */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2.5rem;
+        max-width: 1400px;
+    }
+
+    h1 {
+        font-weight: 800 !important;
+        letter-spacing: -0.02em;
+        background: linear-gradient(90deg, #0f172a 0%, #0d9488 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.25rem !important;
+    }
+
+    h3 {
+        color: #475569 !important;
+        font-weight: 500 !important;
+        margin-top: 0 !important;
+        margin-bottom: 1.25rem !important;
+    }
+
+    /* Barra lateral */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+        border-right: 1px solid #cbd5e1;
+    }
+
+    [data-testid="stSidebar"] h1 {
+        font-size: 1.5rem !important;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #0d9488;
+        margin-bottom: 1rem !important;
+    }
+
+    [data-testid="stSidebar"] .stButton > button {
+        width: 100%;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+
+    /* Pestañas (Tabs) */
+    [data-baseweb="tab-list"] {
+        gap: 8px;
+        background-color: #e2e8f0;
+        padding: 6px;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    [data-baseweb="tab"] {
+        height: 40px;
+        border-radius: 8px !important;
+        padding: 0 18px !important;
+        font-weight: 600 !important;
+        color: #475569 !important;
+        background-color: transparent !important;
+        border: none !important;
+        transition: all 0.2s ease;
+    }
+
+    [data-baseweb="tab"]:hover {
+        color: #0f172a !important;
+        background-color: rgba(255, 255, 255, 0.6) !important;
+    }
+
+    [aria-selected="true"][data-baseweb="tab"] {
+        background-color: #ffffff !important;
+        color: #0d9488 !important;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    [data-baseweb="tab-highlight"] {
+        display: none;
+    }
+
+    /* Tarjetas de métricas (st.metric) */
+    [data-testid="stMetric"] {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #0d9488;
+        border-radius: 12px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    }
+
+    [data-testid="stMetricLabel"] {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-size: 1.65rem !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+    }
+
+    /* Tabla de datos (st.dataframe) */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+        background: #ffffff;
+    }
+
+    /* Botones y botón de descarga */
+    .stButton > button,
+    .stDownloadButton > button {
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        border: 1px solid #cbd5e1 !important;
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        padding: 0.45rem 1rem !important;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        transition: all 0.18s ease !important;
+    }
+
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
+        border-color: #0d9488 !important;
+        color: #0d9488 !important;
+        background-color: #f0fdfa !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.12);
+    }
+
+    .stButton > button:active,
+    .stDownloadButton > button:active {
+        transform: translateY(0);
+    }
+
+    /* Inputs y desplegables en la barra lateral */
+    [data-testid="stSidebar"] [data-baseweb="input"],
+    [data-testid="stSidebar"] [data-baseweb="select"] > div {
+        border-radius: 8px !important;
+        background-color: #ffffff !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 if "inventory" not in st.session_state:
     st.session_state["inventory"] = None
 
@@ -24,6 +183,8 @@ def limpiar_texto_formula():
     st.session_state.texto_formula = ""
 
 
+# carga del dataframe y
+# creación de columnas calculadas
 @st.cache_data
 def load_inventory():
     df = pd.read_csv("reactivos.csv")
@@ -34,7 +195,13 @@ def load_inventory():
     df["bajo_stock"] = df["cantidad"] < df["stock_minimo"]
     df["caducado"] = df["fecha_caducidad"] < date.today()
 
-    df = df.rename(columns={"ficha_pdf": "ficha_url", "pictograma": "picto_url"})
+    df = df.rename(
+        columns={
+            "ficha_pdf": "ficha_url",
+            "pictograma": "picto_url",
+            "cantidad": "unidades_stock",
+        }
+    )
 
     # Usar la ruta /app/static/ para que ImageColumn y LinkColumn funcionen
     df["ficha_url"] = "/app/static/" + df["ficha_url"].astype(str)
@@ -46,7 +213,14 @@ def load_inventory():
 # Cargamos una copia limpia en cada ejecución
 df = load_inventory().copy()
 
-tab_names = ["Inventario", "Editar stock", "Detalle", "Gráficos", "Nuevo reactivo"]
+tab_names = [
+    "Inventario",
+    "Pedido",
+    "Editar stock",
+    "Detalle",
+    "Gráficos",
+    "Nuevo reactivo",
+]
 tabs = {k: v for k, v in zip(tab_names, st.tabs(tab_names))}
 
 with tabs["Inventario"]:
@@ -58,6 +232,7 @@ with tabs["Inventario"]:
     # creación de máscara de filtrado
     mask = pd.Series(True, index=df.index)
 
+    # filtros
     with st.sidebar:
         st.title("Filtrar reactivos")
 
@@ -135,6 +310,7 @@ with tabs["Inventario"]:
     # convertir ficha_url en un enlace con el texto «📄 Abrir» (LinkColumn).
     # Añade un st.download_button que descargue la tabla filtrada en CSV.
 
+    # dataframe inventario
     filtered_df = st.dataframe(
         df[mask],
         hide_index=True,
@@ -166,6 +342,7 @@ with tabs["Inventario"]:
         key=f"table_key_{st.session_state.table_counter}",
     )
 
+    # add to cart
     with st.container(horizontal=True):
         st.download_button(
             label="Descargar listado en csv",
@@ -196,6 +373,7 @@ with tabs["Inventario"]:
             st.session_state.table_counter += 1
             st.rerun()
 
+    # KPI's
     col1, col2, col3, col4 = st.columns([1 for _ in range(4)])
 
     # reactivos mostrados (sobre el total)
@@ -222,5 +400,42 @@ with tabs["Inventario"]:
             label="Reactivos caducados:", value=f"{len(df[df.caducado])} / {len(df)}"
         )
 
-with tabs["Editar stock"]:
-    pass
+with tabs["Pedido"]:
+    # columnas a mostrar en el pedido
+    # id, reactivo, fórmula, unidades_stock,
+    #
+    if st.session_state.order:
+        df_order = df.iloc[list(st.session_state.order), :].copy()
+        st.write(df_order.columns)
+        df_order["unidades_pedido"] = 1
+        df_order["coste_total"] = (
+            df_order["unidades_stock"]
+            / 100
+            * df_order.precio_100
+            * df_order.unidades_pedido
+        )
+
+        st.data_editor(
+            df_order,
+            hide_index=True,
+            column_order=[
+                "reactivo",
+                "formula",
+                "unidades_stock",
+                "unidades_pedido",
+                "coste_total",
+            ],
+            # Solo 'unidades_pedido' será editable)
+            disabled=["reactivo", "formula", "unidades_stock"],
+            column_config={
+                "coste_total": st.column_config.NumberColumn(
+                    label="Coste total", format="%.2f €"
+                ),
+                "unidades_pedido": st.column_config.SelectboxColumn(
+                    label="Unidades pedido",
+                    help="Haz doble clic en la celda para abrir el desplegable y seleccionar las unidades",
+                    options=list(range(21)),
+                    required=True,
+                ),
+            },
+        )

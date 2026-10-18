@@ -1,0 +1,36 @@
+id,reactivo,formula,categoria,estado,masa_molar,pureza_pct,cantidad,unidad,stock_minimo,precio_100,cantidad_comercial,precio_unitario,ubicacion,peligro,fecha_caducidad,ficha_pdf,pictograma
+R001,Ácido clorhídrico 37%,HCl,Ácido,Líquido,36.46,95.1,817,mL,250,10.15,1000,14.5,Armario ácidos,Corrosivo,2030-03-26,fichas/acido_clorhidrico_37.pdf,pictogramas/corrosivo.png
+R002,Ácido sulfúrico 96%,H2SO4,Ácido,Líquido,98.08,97.1,918,mL,1000,21.04,1000,24.8,Armario ácidos,Corrosivo,2025-12-16,fichas/acido_sulfurico_96.pdf,pictogramas/corrosivo.png
+R003,Ácido nítrico 65%,HNO3,Ácido,Líquido,63.01,98.9,563,mL,500,31.87,1000,26.5,Armario ácidos,Corrosivo,2025-08-29,fichas/acido_nitrico_65.pdf,pictogramas/corrosivo.png
+R004,Ácido acético glacial,CH3COOH,Ácido,Líquido,60.05,96.1,242,mL,500,34.71,1000,22.9,Armario inflamables,Inflamable,2027-09-24,fichas/acido_acetico_glacial.pdf,pictogramas/inflamable.png
+R005,Ácido cítrico,C6H8O7,Ácido,Sólido,192.12,95.5,31,g,100,38.37,500,16.4,Armario ácidos,Irritante,2028-12-27,fichas/acido_citrico.pdf,pictogramas/irritante.png
+R006,Hidróxido de sodio,NaOH,Base,Sólido,40.0,97.3,344,g,250,6.93,1000,16.8,Armario bases,Corrosivo,2025-09-13,fichas/hidroxido_de_sodio.pdf,pictogramas/corrosivo.png
+R007,Hidróxido de potasio,KOH,Base,Sólido,56.11,96.4,711,g,500,28.85,1000,24.5,Armario bases,Corrosivo,2029-12-14,fichas/hidroxido_de_potasio.pdf,pictogramas/corrosivo.png
+R008,Amoniaco 25%,NH3,Base,Líquido,17.03,98.5,395,mL,500,3.49,1000,13.9,Armario bases,Corrosivo,2027-12-08,fichas/amoniaco_25.pdf,pictogramas/corrosivo.png
+R009,Hidróxido de calcio,Ca(OH)2,Base,Sólido,74.09,99.2,546,g,200,39.19,500,18.2,Armario bases,Irritante,2027-04-22,fichas/hidroxido_de_calcio.pdf,pictogramas/irritante.png
+R010,Cloruro de sodio,NaCl,Sal,Sólido,58.44,98.1,1119,g,500,17.37,1000,11.5,Estantería general,Ninguno,2029-05-26,fichas/cloruro_de_sodio.pdf,pictogramas/ninguno.png
+R011,Sulfato de cobre(II) pentahidratado,CuSO4·5H2O,Sal,Sólido,249.68,98.3,663,g,250,32.03,500,28.4,Estantería general,Nocivo,2028-01-13,fichas/sulfato_de_cobre_ii_pentahidratado.pdf,pictogramas/nocivo.png
+R012,Nitrato de plata,AgNO3,Sal,Sólido,169.87,95.8,305,g,100,33.22,100,395.0,Estantería general,Corrosivo,2030-06-02,fichas/nitrato_de_plata.pdf,pictogramas/corrosivo.png
+R013,Permanganato de potasio,KMnO4,Sal,Sólido,158.03,96.3,723,g,200,41.75,500,42.5,Estantería general,Comburente,2028-12-26,fichas/permanganato_de_potasio.pdf,pictogramas/comburente.png
+R014,Carbonato de calcio,CaCO3,Sal,Sólido,100.09,98.8,582,g,200,3.93,500,15.8,Estantería general,Ninguno,2025-07-17,fichas/carbonato_de_calcio.pdf,pictogramas/ninguno.png
+R015,Hidrogenocarbonato de sodio,NaHCO3,Sal,Sólido,84.01,97.0,356,g,100,4.38,500,12.9,Estantería general,Ninguno,2028-08-17,fichas/hidrogenocarbonato_de_sodio.pdf,pictogramas/ninguno.png
+R016,Cloruro de bario,BaCl2,Sal,Sólido,208.23,97.4,517,g,250,81.93,500,26.7,Armario tóxicos,Tóxico,2030-07-14,fichas/cloruro_de_bario.pdf,pictogramas/toxico.png
+R017,Dicromato de potasio,K2Cr2O7,Sal,Sólido,294.18,95.7,842,g,500,72.15,500,58.9,Armario tóxicos,Tóxico,2028-05-05,fichas/dicromato_de_potasio.pdf,pictogramas/toxico.png
+R018,Yoduro de potasio,KI,Sal,Sólido,166.0,99.4,199,g,250,18.87,250,64.5,Estantería general,Ninguno,2029-04-05,fichas/yoduro_de_potasio.pdf,pictogramas/ninguno.png
+R019,Óxido de calcio,CaO,Óxido,Sólido,56.08,97.4,391,g,200,34.38,500,19.5,Estantería general,Corrosivo,2029-09-18,fichas/oxido_de_calcio.pdf,pictogramas/corrosivo.png
+R020,Dióxido de manganeso,MnO2,Óxido,Sólido,86.94,95.8,189,g,100,31.1,250,23.8,Estantería general,Nocivo,2030-05-18,fichas/dioxido_de_manganeso.pdf,pictogramas/nocivo.png
+R021,Óxido de cobre(II),CuO,Óxido,Sólido,79.55,97.9,248,g,100,21.86,250,34.2,Estantería general,Nocivo,2028-12-30,fichas/oxido_de_cobre_ii.pdf,pictogramas/nocivo.png
+R022,Etanol 96%,C2H5OH,Disolvente,Líquido,46.07,98.3,1683,mL,500,6.48,1000,16.9,Armario inflamables,Inflamable,2026-12-03,fichas/etanol_96.pdf,pictogramas/inflamable.png
+R023,Acetona,C3H6O,Disolvente,Líquido,58.08,96.7,2142,mL,1000,14.27,1000,13.5,Armario inflamables,Inflamable,2030-06-14,fichas/acetona.pdf,pictogramas/inflamable.png
+R024,Hexano,C6H14,Disolvente,Líquido,86.18,99.7,166,mL,250,39.6,1000,29.8,Armario inflamables,Inflamable,2026-11-16,fichas/hexano.pdf,pictogramas/inflamable.png
+R025,Metanol,CH3OH,Disolvente,Líquido,32.04,97.5,1575,mL,500,27.45,1000,12.8,Armario tóxicos,Tóxico,2027-11-10,fichas/metanol.pdf,pictogramas/toxico.png
+R026,Peróxido de hidrógeno 30%,H2O2,Otros,Líquido,34.01,97.5,2272,mL,1000,10.15,1000,18.6,Estantería general,Corrosivo,2030-06-10,fichas/peroxido_de_hidrogeno_30.pdf,pictogramas/corrosivo.png
+R027,Fenolftaleína,C20H14O4,Indicador,Sólido,318.32,99.7,465,g,250,41.63,250,36.75,Estantería general,Nocivo,2029-11-18,fichas/fenolftaleina.pdf,pictogramas/nocivo.png
+R028,Naranja de metilo,C14H14N3NaO3S,Indicador,Sólido,327.33,97.4,303,g,100,27.83,100,38.9,Armario tóxicos,Tóxico,2026-04-09,fichas/naranja_de_metilo.pdf,pictogramas/toxico.png
+R029,Azul de bromotimol,C27H28Br2O5S,Indicador,Sólido,624.38,95.3,614,g,250,39.69,100,145.0,Estantería general,Irritante,2028-03-14,fichas/azul_de_bromotimol.pdf,pictogramas/irritante.png
+R030,Magnesio (cinta),Mg,Metal,Sólido,24.31,99.0,171,g,100,44.04,25,14.5,Armario inflamables,Inflamable,2029-08-01,fichas/magnesio_cinta.pdf,pictogramas/inflamable.png
+R031,Zinc (granalla),Zn,Metal,Sólido,65.38,97.3,72,g,200,25.42,500,32.4,Estantería metales,Ninguno,2030-07-23,fichas/zinc_granalla.pdf,pictogramas/ninguno.png
+R032,Cobre (lámina),Cu,Metal,Sólido,63.55,97.1,840,g,250,10.71,250,36.8,Estantería metales,Ninguno,2030-04-05,fichas/cobre_lamina.pdf,pictogramas/ninguno.png
+R033,Hierro (limaduras),Fe,Metal,Sólido,55.85,99.9,569,g,200,29.77,500,14.9,Armario inflamables,Inflamable,2029-02-04,fichas/hierro_limaduras.pdf,pictogramas/inflamable.png
+R034,Sodio metálico,Na,Metal,Sólido,22.99,95.6,364,g,500,11.27,250,89.0,Armario inflamables,Inflamable,2029-05-22,fichas/sodio_metalico.pdf,pictogramas/inflamable.png
+
