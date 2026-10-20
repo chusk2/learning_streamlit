@@ -4,166 +4,175 @@ from datetime import date
 import time
 import unicodedata
 
-st.set_page_config(page_title="Mi app", page_icon="🧪", layout="centered")
+st.set_page_config(page_title="Mi app", page_icon="🧪", layout="wide")
 
-# CSS
 st.markdown(
     """
     <style>
-    /* Contenedor principal y tipografía */
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2.5rem;
-        max-width: 1400px;
-    }
-
-    h1 {
-        font-weight: 800 !important;
-        letter-spacing: -0.02em;
-        background: linear-gradient(90deg, #0f172a 0%, #0d9488 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.25rem !important;
-    }
-
-    h3 {
-        color: #475569 !important;
-        font-weight: 500 !important;
-        margin-top: 0 !important;
-        margin-bottom: 1.25rem !important;
-    }
-
-    /* Barra lateral */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
-        border-right: 1px solid #cbd5e1;
-    }
-
-    [data-testid="stSidebar"] h1 {
-        font-size: 1.5rem !important;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #0d9488;
-        margin-bottom: 1rem !important;
-    }
-
-    [data-testid="stSidebar"] .stButton > button {
-        width: 100%;
-        font-size: 0.85rem;
-        padding: 0.35rem 0.75rem;
-        margin-bottom: 0.5rem;
-    }
-
-    /* Pestañas (Tabs) */
-    [data-baseweb="tab-list"] {
-        gap: 8px;
-        background-color: #e2e8f0;
-        padding: 6px;
-        border-radius: 12px;
-        margin-bottom: 1rem;
-    }
-
-    [data-baseweb="tab"] {
-        height: 40px;
-        border-radius: 8px !important;
-        padding: 0 18px !important;
-        font-weight: 600 !important;
-        color: #475569 !important;
-        background-color: transparent !important;
-        border: none !important;
-        transition: all 0.2s ease;
-    }
-
-    [data-baseweb="tab"]:hover {
-        color: #0f172a !important;
-        background-color: rgba(255, 255, 255, 0.6) !important;
-    }
-
-    [aria-selected="true"][data-baseweb="tab"] {
-        background-color: #ffffff !important;
-        color: #0d9488 !important;
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
-    }
-
-    [data-baseweb="tab-highlight"] {
-        display: none;
-    }
-
-    /* Tarjetas de métricas (st.metric) */
-    [data-testid="stMetric"] {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-left: 4px solid #0d9488;
-        border-radius: 12px;
-        padding: 1rem 1.25rem;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    [data-testid="stMetric"]:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-    }
-
-    [data-testid="stMetricLabel"] {
-        font-size: 0.85rem !important;
-        font-weight: 600 !important;
-        color: #64748b !important;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-
-    [data-testid="stMetricValue"] {
-        font-size: 1.65rem !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-    }
-
-    /* Tabla de datos (st.dataframe) */
-    [data-testid="stDataFrame"] {
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
-        background: #ffffff;
-    }
-
-    /* Botones y botón de descarga */
-    .stButton > button,
-    .stDownloadButton > button {
-        border-radius: 8px !important;
-        font-weight: 600 !important;
-        border: 1px solid #cbd5e1 !important;
-        background-color: #ffffff !important;
-        color: #0f172a !important;
-        padding: 0.45rem 1rem !important;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-        transition: all 0.18s ease !important;
-    }
-
-    .stButton > button:hover,
-    .stDownloadButton > button:hover {
-        border-color: #0d9488 !important;
-        color: #0d9488 !important;
-        background-color: #f0fdfa !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.12);
-    }
-
-    .stButton > button:active,
-    .stDownloadButton > button:active {
-        transform: translateY(0);
-    }
-
-    /* Inputs y desplegables en la barra lateral */
-    [data-testid="stSidebar"] [data-baseweb="input"],
-    [data-testid="stSidebar"] [data-baseweb="select"] > div {
-        border-radius: 8px !important;
-        background-color: #ffffff !important;
-    }
+    .block-container { max-width: 1200px; }
     </style>
     """,
     unsafe_allow_html=True,
 )
+
+# CSS
+# st.markdown(
+#     """
+#     <style>
+#     /* Contenedor principal y tipografía */
+#     .block-container {
+#         padding-top: 2rem;
+#         padding-bottom: 2.5rem;
+#         max-width: 1400px;
+#     }
+
+#     h1 {
+#         font-weight: 800 !important;
+#         letter-spacing: -0.02em;
+#         background: linear-gradient(90deg, #0f172a 0%, #0d9488 100%);
+#         -webkit-background-clip: text;
+#         -webkit-text-fill-color: transparent;
+#         margin-bottom: 0.25rem !important;
+#     }
+
+#     h3 {
+#         color: #475569 !important;
+#         font-weight: 500 !important;
+#         margin-top: 0 !important;
+#         margin-bottom: 1.25rem !important;
+#     }
+
+#     /* Barra lateral */
+#     [data-testid="stSidebar"] {
+#         background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+#         border-right: 1px solid #cbd5e1;
+#     }
+
+#     [data-testid="stSidebar"] h1 {
+#         font-size: 1.5rem !important;
+#         padding-bottom: 0.5rem;
+#         border-bottom: 2px solid #0d9488;
+#         margin-bottom: 1rem !important;
+#     }
+
+#     [data-testid="stSidebar"] .stButton > button {
+#         width: 100%;
+#         font-size: 0.85rem;
+#         padding: 0.35rem 0.75rem;
+#         margin-bottom: 0.5rem;
+#     }
+
+#     /* Pestañas (Tabs) */
+#     [data-baseweb="tab-list"] {
+#         gap: 8px;
+#         background-color: #e2e8f0;
+#         padding: 6px;
+#         border-radius: 12px;
+#         margin-bottom: 1rem;
+#     }
+
+#     [data-baseweb="tab"] {
+#         height: 40px;
+#         border-radius: 8px !important;
+#         padding: 0 18px !important;
+#         font-weight: 600 !important;
+#         color: #475569 !important;
+#         background-color: transparent !important;
+#         border: none !important;
+#         transition: all 0.2s ease;
+#     }
+
+#     [data-baseweb="tab"]:hover {
+#         color: #0f172a !important;
+#         background-color: rgba(255, 255, 255, 0.6) !important;
+#     }
+
+#     [aria-selected="true"][data-baseweb="tab"] {
+#         background-color: #ffffff !important;
+#         color: #0d9488 !important;
+#         box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+#     }
+
+#     [data-baseweb="tab-highlight"] {
+#         display: none;
+#     }
+
+#     /* Tarjetas de métricas (st.metric) */
+#     [data-testid="stMetric"] {
+#         background: #ffffff;
+#         border: 1px solid #e2e8f0;
+#         border-left: 4px solid #0d9488;
+#         border-radius: 12px;
+#         padding: 1rem 1.25rem;
+#         box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+#         transition: transform 0.15s ease, box-shadow 0.15s ease;
+#     }
+
+#     [data-testid="stMetric"]:hover {
+#         transform: translateY(-2px);
+#         box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+#     }
+
+#     [data-testid="stMetricLabel"] {
+#         font-size: 0.85rem !important;
+#         font-weight: 600 !important;
+#         color: #64748b !important;
+#         text-transform: uppercase;
+#         letter-spacing: 0.03em;
+#     }
+
+#     [data-testid="stMetricValue"] {
+#         font-size: 1.65rem !important;
+#         font-weight: 700 !important;
+#         color: #0f172a !important;
+#     }
+
+#     /* Tabla de datos (st.dataframe) */
+#     [data-testid="stDataFrame"] {
+#         border: 1px solid #e2e8f0;
+#         border-radius: 12px;
+#         overflow: hidden;
+#         box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+#         background: #ffffff;
+#     }
+
+#     /* Botones y botón de descarga */
+#     .stButton > button,
+#     .stDownloadButton > button {
+#         border-radius: 8px !important;
+#         font-weight: 600 !important;
+#         border: 1px solid #cbd5e1 !important;
+#         background-color: #ffffff !important;
+#         color: #0f172a !important;
+#         padding: 0.45rem 1rem !important;
+#         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+#         transition: all 0.18s ease !important;
+#     }
+
+#     .stButton > button:hover,
+#     .stDownloadButton > button:hover {
+#         border-color: #0d9488 !important;
+#         color: #0d9488 !important;
+#         background-color: #f0fdfa !important;
+#         transform: translateY(-1px);
+#         box-shadow: 0 4px 10px rgba(13, 148, 136, 0.12);
+#     }
+
+#     .stButton > button:active,
+#     .stDownloadButton > button:active {
+#         transform: translateY(0);
+#     }
+
+#     /* Inputs y desplegables en la barra lateral */
+#     [data-testid="stSidebar"] [data-baseweb="input"],
+#     [data-testid="stSidebar"] [data-baseweb="select"] > div {
+#         border-radius: 8px !important;
+#         background-color: #ffffff !important;
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True,
+# )
 
 # CSS para línea separadora
 st.markdown(
@@ -210,7 +219,9 @@ def add_units(row):
         return cantidad
 
 
-# creación de columnas calculadas
+#######################
+### CARGA DATAFRAME ###
+#######################
 @st.cache_data
 def load_inventory():
     df = pd.read_csv("reactivos_comercial.csv")
@@ -238,6 +249,89 @@ def load_inventory():
 # Cargamos una copia limpia en cada ejecución
 df = load_inventory().copy()
 
+#######################
+######## FILTROS ######
+#######################
+
+# filtros
+with st.sidebar:
+    st.title("Filtrar reactivos")
+
+    filtered_df = df.copy()
+    # creación de máscara de filtrado
+    mask = pd.Series(True, index=df.index)
+
+    search_text_reactivo = st.text_input(
+        "Buscar en nombre del reactivo...", key="texto_reactivo"
+    )
+    st.button("Limpiar", on_click=limpiar_texto_reactivo, key="limpiar_reactivo")
+
+    search_text_formula = st.text_input("Buscar fórmula...", key="texto_formula")
+    st.button("Limpiar", on_click=limpiar_texto_formula, key="limpiar_formula")
+
+    if search_text_reactivo:
+        mask &= filtered_df["reactivo"].str.contains(search_text_reactivo,
+                                                     case=False, regex=False)
+
+    if search_text_formula:
+        mask &= filtered_df["formula"].str.contains(
+            search_text_formula, case=False, regex=False
+        )
+
+    categorias = st.multiselect(
+        "Elige categoría",
+        filtered_df.categoria.unique(),
+        default=None,
+        placeholder="Elige categoría(s) de reactivo...",
+    )
+    if categorias:
+        mask &= filtered_df["categoria"].isin(categorias)
+
+    ubicacion = st.selectbox(
+        "Ubicación",
+        ["Todas"] + list(filtered_df["ubicacion"].unique()),
+        index=0,
+        placeholder="Elige ubicación del reactivo...",
+    )
+    if ubicacion != "Todas":
+        mask &= filtered_df.ubicacion == ubicacion
+
+    estado = st.radio(
+        "Estado de agregación", ["Todos", "Líquido", "Sólido"], horizontal=True
+    )
+    if estado != "Todos":
+        mask &= filtered_df.estado == estado
+
+    # masa molar
+    masa_min = float(df["masa_molar"].min())
+    masa_max = float(df["masa_molar"].max())
+
+    masa_molar = st.slider(
+        label="Masa molar",
+        min_value=masa_min,
+        max_value=masa_max,
+        value=(masa_min, masa_max),
+        step=0.1,
+    )
+
+    # filtrar la masa molar
+    mask &= filtered_df["masa_molar"].between(*masa_molar)
+
+    # reactivos con stock
+    productos_bajo_stock = st.checkbox("Productos con bajo stock")
+    if productos_bajo_stock:
+        mask &= filtered_df["bajo_stock"]
+
+    # productos caducados
+    if st.toggle(label="Productos cadudados"):
+        mask &= filtered_df.caducado
+
+    
+
+#######################
+######## TABS ######
+#######################
+
 tab_names = [
     "Inventario",
     "Pedido",
@@ -251,178 +345,110 @@ tabs = {
     for k, v in zip(tab_names, st.tabs(tab_names, key="active_tab", on_change="rerun"))
 }
 
+#######################
+##### INVENTARIO ######
+#######################
+
 with tabs["Inventario"]:
-    filtered_df = df.copy()
-    # creación de máscara de filtrado
-    mask = pd.Series(True, index=df.index)
-
-    cart = st.container(
-        horizontal=True, horizontal_alignment="left", vertical_alignment="center"
-    )
-
-    with cart:
-        st.title("Inventario de Productos Químicos")
-        # st.subheader("Productos químicos disponibles")
-
-    # filtros
-    with st.sidebar:
-        st.title("Filtrar reactivos")
-
-        search_text_reactivo = st.text_input(
-            "Buscar en nombre del reactivo...", key="texto_reactivo"
-        )
-        st.button("Limpiar", on_click=limpiar_texto_reactivo, key="limpiar_reactivo")
-
-        search_text_formula = st.text_input("Buscar fórmula...", key="texto_formula")
-        st.button("Limpiar", on_click=limpiar_texto_formula, key="limpiar_formula")
-
-        if search_text_reactivo:
-            mask &= filtered_df["reactivo"].str.contains(
-                search_text_reactivo, case=False, regex=False
-            )
-
-        if search_text_formula:
-            mask &= filtered_df["formula"].str.contains(
-                search_text_formula, case=False, regex=False
-            )
-
-        categorias = st.multiselect(
-            "Elige categoría",
-            filtered_df.categoria.unique(),
-            default=None,
-            placeholder="Elige categoría(s) de reactivo...",
-        )
-        if categorias:
-            mask &= filtered_df["categoria"].isin(categorias)
-
-        ubicacion = st.selectbox(
-            "Ubicación",
-            ["Todas"] + list(filtered_df["ubicacion"].unique()),
-            index=0,
-            placeholder="Elige ubicación del reactivo...",
-        )
-        if ubicacion != "Todas":
-            mask &= filtered_df.ubicacion == ubicacion
-
-        estado = st.radio(
-            "Estado de agregación", ["Todos", "Líquido", "Sólido"], horizontal=True
-        )
-        if estado != "Todos":
-            mask &= filtered_df.estado == estado
-
-        # masa molar
-        masa_min = float(df["masa_molar"].min())
-        masa_max = float(df["masa_molar"].max())
-
-        masa_molar = st.slider(
-            label="Masa molar",
-            min_value=masa_min,
-            max_value=masa_max,
-            value=(masa_min, masa_max),
-            step=0.1,
-        )
-
-        # filtrar la masa molar
-        mask &= filtered_df["masa_molar"].between(*masa_molar)
-
-        # reactivos con stock
-        productos_bajo_stock = st.checkbox("Productos con bajo stock")
-        if productos_bajo_stock:
-            mask &= filtered_df["bajo_stock"]
-
-        # productos no caducados
-        if st.toggle(label="Productos no cadudados"):
-            mask &= ~filtered_df.caducado
 
     # dataframe filtrado
     filtered_df = (df[mask]
                    .sort_values("reactivo", key=lambda names: names.map(strip_accents))
                    .reset_index()
-    )
+                   )
+    
+    if len(filtered_df) == 0:
+        st.markdown("### No existen productos que cumplan el filtro actual.")
+    else:
+        cart = st.container(horizontal=True, horizontal_alignment="left", 
+                            vertical_alignment="center")
 
-    # dataframe inventario
-    event = st.dataframe(
-        filtered_df,
-        hide_index=True,
-        column_order=[
-            "reactivo",
-            "pureza_pct",
-            "stock_ud",
-            "fecha_caducidad",
-            "ficha_url",
-            "picto_url",
-        ],
-        column_config={
-            "reactivo" : "Reactivo",
-            "stock_ud": "Cantidad actual",
-            "pureza_pct": st.column_config.ProgressColumn(
-                "Pureza", min_value=90, max_value=100, format="%d %%"
-            ),
-            "fecha_caducidad": st.column_config.DatetimeColumn("Fecha caducidad", format="DD-MM-YYYY"),
-            "ficha_url": st.column_config.LinkColumn(
-                "Ficha seguridad", display_text="📄 Abrir"
-            ),
-            "picto_url": st.column_config.ImageColumn("Pictograma seguridad"),
-        },
-        on_select="rerun",
-        selection_mode="multi-row",
-        key=f"table_key_{st.session_state.table_counter}",
-    )
+        with cart:
+            st.title("Inventario de Productos Químicos")
 
-    with cart:
-        st.download_button(
-            label="Descargar listado en csv",
-            data=df[mask].to_csv(encoding="utf-8", index=False),
-            file_name="inventario_filtrado.csv",
-            mime="text/csv",
+        # dataframe inventario
+        event = st.dataframe(
+            filtered_df,
+            hide_index=True,
+            column_order=[
+                "reactivo",
+                "pureza_pct",
+                "stock_ud",
+                "fecha_caducidad",
+                "ficha_url",
+                "picto_url",
+            ],
+            column_config={
+                "reactivo" : "Reactivo",
+                "stock_ud": "Cantidad actual",
+                "pureza_pct": st.column_config.ProgressColumn(
+                    "Pureza", min_value=90, max_value=100, format="%d %%"
+                ),
+                "fecha_caducidad": st.column_config.DatetimeColumn("Fecha caducidad", format="DD-MM-YYYY"),
+                "ficha_url": st.column_config.LinkColumn(
+                    "Ficha seguridad", display_text="📄 Abrir"
+                ),
+                "picto_url": st.column_config.ImageColumn("Pictograma seguridad"),
+            },
+            on_select="rerun",
+            selection_mode="multi-row",
+            key=f"table_key_{st.session_state.table_counter}",
         )
 
-        if "order_round" not in st.session_state:
-            st.session_state.order_round = 0
+        with cart:
+            st.download_button(
+                label="Descargar listado en csv",
+                data=df[mask].to_csv(encoding="utf-8", index=False),
+                file_name="inventario_filtrado.csv",
+                mime="text/csv",
+            )
 
-        # guarda los valores de ID de reactivo de las filas seleccionadas
-        selected_ids = filtered_df.loc[event.selection.rows, "id"]
-        if len(selected_ids) > 0 and st.button(
-            "🛒 Añadir al pedido"):
-            new_order_ids = [
-                id_ for id_ in selected_ids if id_ not in st.session_state.order_dict
-            ]
-            # inicializar las cantidades de los reactivos
-            # añadidos al pedido a 1
-            new_order_dict = {id_: 1 for id_ in new_order_ids}
-            st.session_state.order_dict.update(new_order_dict)
+            if "order_round" not in st.session_state:
+                st.session_state.order_round = 0
 
-            # container para mensajes
-            temp_container = st.empty()
+            # guarda los valores de ID de reactivo de las filas seleccionadas
+            selected_ids = filtered_df.loc[event.selection.rows, "id"]
+            if len(selected_ids) > 0 and st.button(
+                "🛒 Añadir al pedido"):
+                new_order_ids = [
+                    id_ for id_ in selected_ids if id_ not in st.session_state.order_dict
+                ]
+                # inicializar las cantidades de los reactivos
+                # añadidos al pedido a 1
+                new_order_dict = {id_: 1 for id_ in new_order_ids}
+                st.session_state.order_dict.update(new_order_dict)
 
-            if len(new_order_ids) > 0:
-                temp_container.success(
-                    f"Added {len(new_order_ids)} new reagents to shopping cart."
-                )
-                time.sleep(1)
-                temp_container.empty()
-            else:
-                temp_container.warning("Items already in shopping cart!")
-                time.sleep(1)
-                temp_container.empty()
+                # container para mensajes
+                temp_container = st.empty()
 
-            # limpio la selección
-            st.session_state.table_counter += 1
-            st.rerun()
+                if len(new_order_ids) > 0:
+                    temp_container.success(
+                        f"Added {len(new_order_ids)} new reagents to shopping cart."
+                    )
+                    time.sleep(1)
+                    temp_container.empty()
+                else:
+                    temp_container.warning("Items already in shopping cart!")
+                    time.sleep(1)
+                    temp_container.empty()
 
-    # KPI's
-    with st.container(horizontal=True):
-        KPI_WIDTH = "content"  # o 250, o "stretch"
+                # limpio la selección
+                st.session_state.table_counter += 1
+                st.rerun()
 
-        kpi_values = {
-            "Reactivos mostrados:": f"{len(df[mask])} / {len(df)}",
-            "Reactivos con bajo stock:": f"{len(df[df.bajo_stock])} / {len(df)}",
-            "Reactivos caducados:": f"{len(df[df.caducado])} / {len(df)}",
-        }
+            # KPI's
+            with st.container(horizontal=True):
+                KPI_WIDTH = "content"  # o 250, o "stretch"
 
-        cols = st.columns(len(kpi_values))
-        for col, (label, value) in zip(cols, kpi_values.items()):
-            col.metric(label, value, width=KPI_WIDTH)
+                kpi_values = {
+                    "Reactivos mostrados:": f"{len(df[mask])} / {len(df)}",
+                    "Reactivos con bajo stock:": f"{len(df[df.bajo_stock])} / {len(df)}",
+                    "Reactivos caducados:": f"{len(df[df.caducado])} / {len(df)}",
+                }
+
+                cols = st.columns(len(kpi_values))
+                for col, (label, value) in zip(cols, kpi_values.items()):
+                    col.metric(label, value, width=KPI_WIDTH)
 
 with tabs["Pedido"]:
 
@@ -554,18 +580,50 @@ with tabs["Pedido"]:
             )
 
 with tabs["Editar stock"] :
-    
-    st.data_editor(
-        df,
-        hide_index=True,
-        column_order= ["id", "reactivo", "stock_ud", "stock_minimo"],
-        column_config={
-            "id" : "ID",
-            "reactivo" : "Reactivo",
-            "stock_ud" : "Stock",
-            "stock_minimo" : "Stock mínimo necesario"
-        },
-        key ="stock_editor"
-    ) 
-    st.write(f"Se han editado {len(st.session_state.stock_editor["edited_rows"])} productos.")
+
+    # separar unidades de la cantidad
+    # para poder editar la cantidad
+    df_stock = df[mask].copy()
+    if len(df_stock) == 0:
+        st.markdown("### No existen productos que cumplan el filtro actual.")
+    else:
+        parts = df_stock.stock_ud.str.split(expand=True)
+        df_stock["unidades_reactivo"] = parts[1]
+
+        with st.container(horizontal=False, horizontal_alignment="center", width = "stretch"):
+            st.markdown("## Edita los artículos del inventario")
+            edited_stock_df = st.data_editor(
+                df_stock,
+                width=600,
+                hide_index=True,
+                column_order= ["id", "reactivo", "cantidad", "stock_minimo", "unidades_reactivo"],
+                column_config={
+                    "id" : "ID",
+                    "reactivo" : "Reactivo",
+                    "cantidad" : "Stock actual",
+                    "stock_minimo" : "Stock mínimo necesario",
+                    "unidades_reactivo" : "Unidad medida"
+                },
+                disabled = ["id", "reactivo", "unidades_reactivo"],
+                key ="stock_editor"
+            )
+        with st.container(horizontal=True, vertical_alignment="center"):
+
+                edited_reagents = len(st.session_state.stock_editor["edited_rows"])
+                if edited_reagents > 0:
+                    if edited_reagents == 1:
+                        st.write(f"Se ha editado 1 reactivo.")
+                    else:
+                        st.write(f"Se han editado {edited_reagents} reactivos.")
+
+                updated_stock_df = edited_stock_df.iloc[:,:-5]  # excluir columnas calculadas
+                # eliminar "/app/static/" de las rutas
+                updated_stock_df["ficha_url"] = updated_stock_df.ficha_url.str.replace("/app/static/", "")
+                updated_stock_df["picto_url"] = updated_stock_df.picto_url.str.replace("/app/static/", "")
+
+                if st.download_button(label = "Guardar stock actualizado",
+                                data = updated_stock_df.to_csv(index = False),
+                                file_name = "reactivos_comercial.csv",
+                                mime="text/csv"):
+                    load_inventory.clear()
 

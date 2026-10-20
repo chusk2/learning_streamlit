@@ -1,9 +1,9 @@
-id,reactivo,formula,categoria,estado,masa_molar,pureza_pct,cantidad,unidad,stock_minimo,precio_100,cantidad_comercial,precio_unitario,ubicacion,peligro,fecha_caducidad,ficha_pdf,pictograma
+id,reactivo,formula,categoria,estado,masa_molar,pureza_pct,cantidad,unidad,stock_minimo,precio_100,cantidad_comercial,precio_unitario,ubicacion,peligro,fecha_caducidad,ficha_url,picto_url
 R001,Ácido clorhídrico 37%,HCl,Ácido,Líquido,36.46,95.1,817,mL,250,10.15,1000,14.5,Armario ácidos,Corrosivo,2030-03-26,fichas/acido_clorhidrico_37.pdf,pictogramas/corrosivo.png
 R002,Ácido sulfúrico 96%,H2SO4,Ácido,Líquido,98.08,97.1,918,mL,1000,21.04,1000,24.8,Armario ácidos,Corrosivo,2025-12-16,fichas/acido_sulfurico_96.pdf,pictogramas/corrosivo.png
 R003,Ácido nítrico 65%,HNO3,Ácido,Líquido,63.01,98.9,563,mL,500,31.87,1000,26.5,Armario ácidos,Corrosivo,2025-08-29,fichas/acido_nitrico_65.pdf,pictogramas/corrosivo.png
-R004,Ácido acético glacial,CH3COOH,Ácido,Líquido,60.05,96.1,242,mL,500,34.71,1000,22.9,Armario inflamables,Inflamable,2027-09-24,fichas/acido_acetico_glacial.pdf,pictogramas/inflamable.png
-R005,Ácido cítrico,C6H8O7,Ácido,Sólido,192.12,95.5,31,g,100,38.37,500,16.4,Armario ácidos,Irritante,2028-12-27,fichas/acido_citrico.pdf,pictogramas/irritante.png
+R004,Ácido acético glacial,CH3COOH,Ácido,Líquido,60.05,96.1,240,mL,250,34.71,1000,22.9,Armario inflamables,Inflamable,2027-09-24,fichas/acido_acetico_glacial.pdf,pictogramas/inflamable.png
+R005,Ácido cítrico,C6H8O7,Ácido,Sólido,192.12,95.5,31,g,150,38.37,500,16.4,Armario ácidos,Irritante,2028-12-27,fichas/acido_citrico.pdf,pictogramas/irritante.png
 R006,Hidróxido de sodio,NaOH,Base,Sólido,40.0,97.3,344,g,250,6.93,1000,16.8,Armario bases,Corrosivo,2025-09-13,fichas/hidroxido_de_sodio.pdf,pictogramas/corrosivo.png
 R007,Hidróxido de potasio,KOH,Base,Sólido,56.11,96.4,711,g,500,28.85,1000,24.5,Armario bases,Corrosivo,2029-12-14,fichas/hidroxido_de_potasio.pdf,pictogramas/corrosivo.png
 R008,Amoniaco 25%,NH3,Base,Líquido,17.03,98.5,395,mL,500,3.49,1000,13.9,Armario bases,Corrosivo,2027-12-08,fichas/amoniaco_25.pdf,pictogramas/corrosivo.png
@@ -33,4 +33,3 @@ R031,Zinc (granalla),Zn,Metal,Sólido,65.38,97.3,72,g,200,25.42,500,32.4,Estante
 R032,Cobre (lámina),Cu,Metal,Sólido,63.55,97.1,840,g,250,10.71,250,36.8,Estantería metales,Ninguno,2030-04-05,fichas/cobre_lamina.pdf,pictogramas/ninguno.png
 R033,Hierro (limaduras),Fe,Metal,Sólido,55.85,99.9,569,g,200,29.77,500,14.9,Armario inflamables,Inflamable,2029-02-04,fichas/hierro_limaduras.pdf,pictogramas/inflamable.png
 R034,Sodio metálico,Na,Metal,Sólido,22.99,95.6,364,g,500,11.27,250,89.0,Armario inflamables,Inflamable,2029-05-22,fichas/sodio_metalico.pdf,pictogramas/inflamable.png
-
