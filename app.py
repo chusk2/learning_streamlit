@@ -2,8 +2,9 @@ import pandas as pd
 import streamlit as st
 from datetime import date
 import time
+import unicodedata
 
-st.set_page_config(page_title="Mi app", page_icon="🧪", layout="wide")
+st.set_page_config(page_title="Mi app", page_icon="🧪", layout="centered")
 
 # CSS
 st.markdown(
@@ -175,12 +176,10 @@ st.markdown(
             """,
     unsafe_allow_html=True,
 )
-if "inventory" not in st.session_state:
-    st.session_state["inventory"] = None
 
-# fuerzo a que sea conjunto
-if "order_id" not in st.session_state or not isinstance(st.session_state.order_id, set):
-    st.session_state.order_id = set()
+# order_dict: {"R034" : 3 ud}
+if "order_dict" not in st.session_state:
+    st.session_state.order_dict = {}
 
 if "table_counter" not in st.session_state:
     st.session_state.table_counter = 0
@@ -193,6 +192,23 @@ def limpiar_texto_reactivo():
 def limpiar_texto_formula():
     st.session_state.texto_formula = ""
 
+def strip_accents(text):
+    """Devuelve `text` (str) en minúsculas y sin tildes ni diéresis: "Ácido" -> "acido"."""
+    # NFD separa cada letra de su tilde ("Á" -> "A" + "´"); luego se descartan
+    # las tildes, que son caracteres de categoría "Mn" (marca diacrítica)
+    decomposed = unicodedata.normalize("NFD", text)
+    return "".join(c for c in decomposed if unicodedata.category(c) != "Mn").lower()
+
+def add_units(row):
+    cantidad = row.iloc[0]
+    estado = row.iloc[1]
+    if estado == "Sólido":
+        return f"{cantidad} g"
+    elif estado == "Líquido":
+        return f"{cantidad} mL"
+    else:
+        return cantidad
+
 
 # creación de columnas calculadas
 @st.cache_data
@@ -201,25 +217,14 @@ def load_inventory():
 
     # Procesar columnas dentro de la función cacheada para que solo se ejecute una vez
     df["fecha_caducidad"] = pd.to_datetime(df["fecha_caducidad"]).dt.date
-    df["cantidad_unidades"] = [
-        f"{valor} g" if estado == "Sólido" else f"{valor} mL"
-        for valor, estado in zip(df["cantidad"], df["estado"])
-    ]
     df["bajo_stock"] = df["cantidad"] < df["stock_minimo"]
     df["caducado"] = df["fecha_caducidad"] < date.today()
-    df["stock_ud"] = [
-        f"{value} g" if state == "Sólido" else f"{value} mL"
-        for value, state in zip(df.cantidad, df.estado)
-    ]
-    df["cantidad_comercial_ud"] = [
-        f"{value} g" if state == "Sólido" else f"{value} mL"
-        for value, state in zip(df.cantidad_comercial, df.estado)
-    ]
+    df["stock_ud"] = df.loc[:, ["cantidad", "estado"]].apply(add_units, axis = 1)
+    df["cantidad_comercial_ud"] = df.loc[:, ["cantidad_comercial", "estado"]].apply(add_units, axis = 1)
     df = df.rename(
         columns={
             "ficha_pdf": "ficha_url",
             "pictograma": "picto_url",
-            "stock": "unidades_stock",
         }
     )
 
@@ -241,7 +246,10 @@ tab_names = [
     "Gráficos",
     "Nuevo reactivo",
 ]
-tabs = {k: v for k, v in zip(tab_names, st.tabs(tab_names, key="active_tab", on_change="rerun"))}
+tabs = {
+    k: v
+    for k, v in zip(tab_names, st.tabs(tab_names, key="active_tab", on_change="rerun"))
+}
 
 with tabs["Inventario"]:
     filtered_df = df.copy()
@@ -263,10 +271,10 @@ with tabs["Inventario"]:
         search_text_reactivo = st.text_input(
             "Buscar en nombre del reactivo...", key="texto_reactivo"
         )
-        st.button("Limpiar búsqueda nombre producto", on_click=limpiar_texto_reactivo)
+        st.button("Limpiar", on_click=limpiar_texto_reactivo, key="limpiar_reactivo")
 
-        search_text_formula = st.text_input("Buscar en fórmula del reactivo...")
-        st.button("Limpiar búsqueda fórmula", on_click=limpiar_texto_formula)
+        search_text_formula = st.text_input("Buscar fórmula...", key="texto_formula")
+        st.button("Limpiar", on_click=limpiar_texto_formula, key="limpiar_formula")
 
         if search_text_reactivo:
             mask &= filtered_df["reactivo"].str.contains(
@@ -313,8 +321,9 @@ with tabs["Inventario"]:
             value=(masa_min, masa_max),
             step=0.1,
         )
-        if masa_molar != (0, 0):
-            mask &= filtered_df["masa_molar"].between(*masa_molar)
+
+        # filtrar la masa molar
+        mask &= filtered_df["masa_molar"].between(*masa_molar)
 
         # reactivos con stock
         productos_bajo_stock = st.checkbox("Productos con bajo stock")
@@ -326,7 +335,10 @@ with tabs["Inventario"]:
             mask &= ~filtered_df.caducado
 
     # dataframe filtrado
-    filtered_df = df[mask].sort_values("reactivo").reset_index(drop=True)
+    filtered_df = (df[mask]
+                   .sort_values("reactivo", key=lambda names: names.map(strip_accents))
+                   .reset_index()
+    )
 
     # dataframe inventario
     event = st.dataframe(
@@ -335,31 +347,28 @@ with tabs["Inventario"]:
         column_order=[
             "reactivo",
             "pureza_pct",
-            "stock",
+            "stock_ud",
             "fecha_caducidad",
             "ficha_url",
             "picto_url",
         ],
         column_config={
-            "stock": "Cantidad disponible",
+            "reactivo" : "Reactivo",
+            "stock_ud": "Cantidad actual",
             "pureza_pct": st.column_config.ProgressColumn(
                 "Pureza", min_value=90, max_value=100, format="%d %%"
             ),
-            "precio_unitario": st.column_config.NumberColumn(
-                "Precio unitario", format="%.2f €"
-            ),
-            "fecha_caducidad": st.column_config.DatetimeColumn(format="DD-MM-YYYY"),
+            "fecha_caducidad": st.column_config.DatetimeColumn("Fecha caducidad", format="DD-MM-YYYY"),
             "ficha_url": st.column_config.LinkColumn(
                 "Ficha seguridad", display_text="📄 Abrir"
             ),
-            "picto_url": st.column_config.ImageColumn("pictograma"),
+            "picto_url": st.column_config.ImageColumn("Pictograma seguridad"),
         },
         on_select="rerun",
         selection_mode="multi-row",
         key=f"table_key_{st.session_state.table_counter}",
     )
 
-    # add to cart
     with cart:
         st.download_button(
             label="Descargar listado en csv",
@@ -371,20 +380,24 @@ with tabs["Inventario"]:
         if "order_round" not in st.session_state:
             st.session_state.order_round = 0
 
-        def increase_order_round():
-            st.session_state.order_round += 1
-
         # guarda los valores de ID de reactivo de las filas seleccionadas
-        selected_id = filtered_df.loc[event.selection.rows, "id"]
-        if len(selected_id) > 0 and st.button("🛒 Añadir al pedido", on_click=increase_order_round):
-            new_order_id = set(selected_id) - st.session_state.order_id
-            st.session_state.order_id.update(new_order_id)
+        selected_ids = filtered_df.loc[event.selection.rows, "id"]
+        if len(selected_ids) > 0 and st.button(
+            "🛒 Añadir al pedido"):
+            new_order_ids = [
+                id_ for id_ in selected_ids if id_ not in st.session_state.order_dict
+            ]
+            # inicializar las cantidades de los reactivos
+            # añadidos al pedido a 1
+            new_order_dict = {id_: 1 for id_ in new_order_ids}
+            st.session_state.order_dict.update(new_order_dict)
 
+            # container para mensajes
             temp_container = st.empty()
 
-            if len(new_order_id) > 0:
+            if len(new_order_ids) > 0:
                 temp_container.success(
-                    f"Added {len(new_order_id)} new reagents to shopping cart."
+                    f"Added {len(new_order_ids)} new reagents to shopping cart."
                 )
                 time.sleep(1)
                 temp_container.empty()
@@ -412,56 +425,50 @@ with tabs["Inventario"]:
             col.metric(label, value, width=KPI_WIDTH)
 
 with tabs["Pedido"]:
-    # diccionario {reactivo: unidades pedido}
-    if "order" not in st.session_state:
-        st.session_state["order"] = {}  # {"R003" : 2, "R017" : 1}
 
-    if "order_df" not in st.session_state:
-        st.session_state["order_df"] = pd.DataFrame()
-
-    if len(st.session_state.order_id) == 0:
-        st.markdown("### Aún no se han añadido artículos al carrito de compra.")
+    if len(st.session_state.order_dict) == 0:
+        st.markdown("### Sin artículos añadidos al pedido.")
 
     else:
 
-        # inicializar las unidades_pedido a 1
-        for id_ in st.session_state.order_id:
-            st.session_state.order.setdefault(id_, 1)
+        # cabecera: "Pedido de reactivos"
+        st.markdown("## Pedido de reactivos")
 
-        # crear order_df
-        st.session_state.order_df = df.set_index("id").loc[list(st.session_state.order_id)].copy().reset_index()
+        # inicializar order_df
+        order_df = (df.set_index("id")
+                    .loc[list(st.session_state.order_dict)]
+                    .reset_index())
         
-        # puebla las cantidades de cada reactivo a partir del dict order {id_reactivo : qty}
-        # si es la primera vez, se inician a 1
-        st.session_state.order_df["unidades_pedido"] = (st.session_state.order_df["id"]
-                                                        .map(st.session_state.order) )
+        order_df["unidades_pedido"] = order_df["id"].map(st.session_state.order_dict)
+        order_df["coste_subtotal"] = order_df["unidades_pedido"] * order_df["precio_unitario"]
+
+        # rellena order_df.unidades_pedido a partir del dict order_dict {id_reactivo : qty}
+        # recupera value del order_dict cuya clave coincida con order_df.id
+        order_df["unidades_pedido"] = order_df["id"].map(st.session_state.order_dict)
 
         # cálculo de los subtotales
-        st.session_state.order_df["coste_subtotal"] = (st.session_state.order_df.unidades_pedido * 
-                                                       st.session_state.order_df.precio_unitario )
+        order_df["coste_subtotal"] = order_df.unidades_pedido * order_df.precio_unitario
 
         # resetea el índice
-        st.session_state.order_df.reset_index(drop=True, inplace=True)
+        order_df.reset_index(drop=True, inplace=True)
 
-        # muestra los reactivos añadidos al carro
+        # st.dataframe con reactivos del pedido
         cols_to_show = [
             "reactivo",
-            "formula",
-            "stock",
-            "precio_unitario",
+            "stock_ud",
             "cantidad_comercial_ud",
             "unidades_pedido",
+            "precio_unitario",            
         ]
 
         st.dataframe(
-            st.session_state.order_df,
+            order_df,
             hide_index=True,
             column_order=cols_to_show,
             column_config={
                 "reactivo": "Reactivo",
-                "formula": "Fórmula",
-                "stock": "Cantidad existente",
-                "cantidad_comercial_ud": "Capacidad producto comercial",
+                "stock_ud": "Stock actual",
+                "cantidad_comercial_ud": "Cantidad comercial",
                 "precio_unitario": st.column_config.NumberColumn(
                     "Precio unitario", format="%.2f €"
                 ),
@@ -469,66 +476,96 @@ with tabs["Pedido"]:
             },
             key="order_table",
         )
-        
+
         # headers
-        h1, h2, h3, h4, h5 = st.columns([1, 1, 1, 1, 1])
-        h1.markdown("**Reactivo**")
-        h2.markdown("**Unidades**")
-        h3.markdown("**Precio unitario**")
-        h4.markdown("**Subtotal**")
-        h5.markdown("**Eliminarl**")
+        PROPORCIONES = [0.5, 0.6, 1, 1, 0.6]
+        h1, h2, h3, h4, h5 = st.columns(PROPORCIONES)
+        h1.markdown("**Eliminar**")
+        h2.markdown("**Reactivo**")
+        h3.markdown("**Unidades**")
+        h4.markdown("**Precio unitario**")
+        h5.markdown("**Subtotal**")
+        
         st.divider()
 
-        def update_quantities(id_, index):
+        def update_quantities(id_):
             # order -> {id_reactivo : cantidad}
-            st.session_state.order[id_] = st.session_state[f"qty_{index}"]
+            st.session_state.order_dict[id_] = st.session_state[f"qty_{id_}"]
 
         def remove_item(id_):
-            st.session_state.order_id.discard(id_)
-            del st.session_state.order[id_]
+            del st.session_state.order_dict[id_]
 
         def remove_order():
-            st.session_state.order_round = 0
-            del st.session_state["order_df"]
-            del st.session_state["order_id"]
+            st.session_state["order_dict"] = {}
             # mover a Inventario
-            st.session_state.active_tab= "Inventario"
+            st.session_state.active_tab = "Inventario"
             st.toast("Pedido eliminado", icon="🗑️")
 
-        for index, row in st.session_state.order_df.iterrows():
+        # listado de productos en el pedido
+        for index, row in order_df.iterrows():
             col1, col2, col3, col4, col5 = st.columns(
-                [1, 1, 1, 1, 1], vertical_alignment="center"
+                PROPORCIONES, vertical_alignment="center"
             )
 
-            col1.write(row.reactivo)  # reactivo
+            # eliminar artículo del pedido
+            col1.button(
+                            label="🗑️", on_click=remove_item, args=(row.id,), key=f"borrar_{row.id}"
+                        )
+            
+            # reactivo
+            col2.write(row.reactivo)
+
             # unidades
-            col2.number_input(  
+            col3.number_input(
                 label="",
                 min_value=1,
                 value=row.unidades_pedido,
                 step=1,
                 on_change=update_quantities,
-                args=(row.id, index),
-                key=f"qty_{index}",
+                # IMPORTANTE: args recibe tuplas! (value1, )
+                args=(row.id,),
+                key=f"qty_{row.id}",
             )
-            col3.write(f"{row.precio_unitario:.2f} €")  # coste_unitario
-            col4.write(
-                f"{row.precio_unitario * row.unidades_pedido:.2f} €"
-            )  # coste_total
 
-            col5.button(label = "🗑️", on_click=remove_item, args=(row.id,),
-                        key = f"borrar_{index}")
+            # coste_unitario
+            col4.write(f"{row.precio_unitario:.2f} €")
+
+            # coste_total
+            col5.write(
+                f"{row.precio_unitario * row.unidades_pedido:.2f} €"
+            )  
+
+            # borrar artículo del pedido
+            
             st.divider()
 
+        # total del pedido
         with st.container(
-            horizontal=True, horizontal_alignment="left", vertical_alignment="center"
+            horizontal=True, horizontal_alignment="right", vertical_alignment="center"
         ):
+            # botón de limpieza del pedido
+            st.button("Borrar pedido 🗑️", on_click=remove_order)
+            
             # KPI con total pedido
             st.metric(
                 label="Coste total del pedido",
-                value=f"{st.session_state.order_df.coste_subtotal.sum():.2f} €",
+                value=f"{order_df.coste_subtotal.sum():.2f} €",
                 width="content",
             )
 
-            # botón de limpieza del pedido
-            st.button("Borrar pedido 🗑️", on_click=remove_order)
+with tabs["Editar stock"] :
+    
+    st.data_editor(
+        df,
+        hide_index=True,
+        column_order= ["id", "reactivo", "stock_ud", "stock_minimo"],
+        column_config={
+            "id" : "ID",
+            "reactivo" : "Reactivo",
+            "stock_ud" : "Stock",
+            "stock_minimo" : "Stock mínimo necesario"
+        },
+        key ="stock_editor"
+    ) 
+    st.write(f"Se han editado {len(st.session_state.stock_editor["edited_rows"])} productos.")
+
