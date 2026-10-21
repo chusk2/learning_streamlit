@@ -227,7 +227,14 @@ def load_inventory():
     df = pd.read_csv("reactivos_comercial.csv")
 
     # Procesar columnas dentro de la función cacheada para que solo se ejecute una vez
-    df["fecha_caducidad"] = pd.to_datetime(df["fecha_caducidad"]).dt.date
+    
+    # cálculos con caducidad
+    today_ = pd.Timestamp.today().normalize()
+    fecha_cad = pd.to_datetime(df["fecha_caducidad"])
+
+    df["dias_para_caducar"] = (fecha_cad - today_).dt.days
+    df["fecha_caducidad"] = fecha_cad.dt.date
+    
     df["bajo_stock"] = df["cantidad"] < df["stock_minimo"]
     df["caducado"] = df["fecha_caducidad"] < date.today()
     df["stock_ud"] = df.loc[:, ["cantidad", "estado"]].apply(add_units, axis = 1)
@@ -326,6 +333,9 @@ with st.sidebar:
     if st.toggle(label="Productos cadudados"):
         mask &= filtered_df.caducado
 
+    # reactivos filtrados
+    st.metric(label = "Reactivos filtrados",
+              value = df[mask].shape[0])
 #######################
 ######## TABS ######
 #######################
@@ -335,7 +345,7 @@ tab_names = [
     "Pedido",
     "Editar stock",
     "Detalle",
-    "Gráficos",
+    "Estadísticas",
     "Nuevo reactivo",
 ]
 tabs = {
@@ -358,11 +368,10 @@ with tabs["Inventario"]:
     if len(filtered_df) == 0:
         st.info("No existen productos que cumplan el filtro actual.")
     else:
+        st.title("Inventario de Productos Químicos")
+
         cart = st.container(horizontal=True, horizontal_alignment="left", 
                             vertical_alignment="center")
-
-        with cart:
-            st.title("Inventario de Productos Químicos")
 
         # dataframe inventario
         event = st.dataframe(
@@ -453,6 +462,8 @@ with tabs["Inventario"]:
                 col.metric(label, value, width=KPI_WIDTH)
 
 with tabs["Pedido"]:
+
+    st.title("Gestión del pedido de reactivos")
 
     if len(st.session_state.order_dict) == 0:
         st.info("Sin artículos añadidos al pedido.")
@@ -583,6 +594,8 @@ with tabs["Pedido"]:
 
 with tabs["Editar stock"] :
 
+    st.title("Edita los artículos del inventario")
+
     # separar unidades de la cantidad
     # para poder editar la cantidad
     df_stock = df[mask].copy()
@@ -593,7 +606,7 @@ with tabs["Editar stock"] :
         df_stock["unidades_reactivo"] = parts[1]
 
         with st.container(horizontal=False, horizontal_alignment="center", width = "stretch"):
-            st.markdown("## Edita los artículos del inventario")
+            
             edited_stock_df = st.data_editor(
                 df_stock,
                 width=600,
@@ -630,7 +643,7 @@ with tabs["Editar stock"] :
                     load_inventory.clear()
 
 with tabs["Detalle"]:
-    st.markdown("### Selecciona un reactivo a partir de su valor de ID")
+    st.title("Detalles de reactivo")
 
     option_strings = df[mask].apply(lambda row: f"{row.id} - {row.reactivo}", axis=1)
     if len(option_strings) == 0:
@@ -662,11 +675,15 @@ with tabs["Detalle"]:
                 if id_info["caducado"]:
                     st.warning(f"El reactivo está caducado. Fecha caducidad: {fecha_cad:%d-%m-%Y}. {days_expired} días caducado.")
 
-with tabs["Gráficos"]:
+with tabs["Estadísticas"]:
 
-    datos_barchart = df.copy()
-    datos_barchart["valor"] = datos_barchart.cantidad / 100 * datos_barchart.precio_100
-    value_by_category = (datos_barchart.groupby("categoria").valor
+    st.title("Estadísticas del inventario")
+
+    # valor del inventario
+    st.markdown("### Valor económico por categoría de reactivo")
+    data_plots = df[mask].copy()
+    data_plots["valor"] = data_plots.cantidad / 100 * data_plots.precio_100
+    value_by_category = (data_plots.groupby("categoria").valor
                          .sum()
                          .to_frame()
                          .reset_index() )
@@ -676,3 +693,70 @@ with tabs["Gráficos"]:
                  x_label = "Categoría reactivo",
                  y_label = "Valor (€)",
                  horizontal=True, sort="valor")
+
+    st.markdown("### Comparación de stock actual y stock mínimo")
+
+    # comparación stock sólidos
+    st.markdown("#### Reactivos sólidos")
+    data_low_stock = df[(df.bajo_stock) & (df.estado == "Sólido")]
+    st.bar_chart(data = data_low_stock,
+                 x = "reactivo",
+                 y = ["cantidad", "stock_minimo"],
+                 x_label = "Reactivo",
+                 y_label = "Cantidad",
+                 stack = False
+                 )
+
+    # comparación stock líquidos
+    st.markdown("#### Reactivos líquidos")
+    data_low_stock = df[(df.bajo_stock) & (df.estado == "Líquido")]
+    st.bar_chart(data = data_low_stock,
+                 x = "reactivo",
+                 y = ["cantidad", "stock_minimo"],
+                 x_label = "Reactivo",
+                 y_label = "Cantidad",
+                 stack = False
+                 )
+
+    st.markdown("### Fechas de caducidad")
+       
+    # Colorear filas de reactivo caducado
+
+    # colores
+    dark_theme_enabled = st.context.theme.type == "dark"
+    colour_pink = "background-color: #ffcdd2"
+
+    if dark_theme_enabled:
+        red_colour = "background-color: rgba(255, 75, 75, 1)"
+        amber_colour = "background-color: rgba(230, 126, 0, 1)"
+    else:
+        red_colour = "background-color: rgba(255, 75, 75, 1); color : #ffffff"
+        amber_colour = "background-color: rgba(230, 126, 0, 1); color: #ffffff"
+
+    def color_row(row):
+        if row["caducado"]:
+            row_colour = red_colour
+        elif row["dias_para_caducar"] < 30:
+            row_colour = amber_colour            
+        else:
+            row_colour = None
+        return [row_colour] * len(row)
+
+    def etiqueta(texto, estilo):
+        return f'<span style="{estilo}; padding: 2px 8px; border-radius: 4px;">{texto}</span>'
+
+    st.html(etiqueta("Caducado", red_colour) + " · " + etiqueta("Caduca pronto (menos de 1 mes)", amber_colour))
+
+    cols = ["id", "reactivo", "fecha_caducidad", "caducado", "dias_para_caducar"]
+    data_expiration_dates = df[cols].sort_values("fecha_caducidad").reset_index()
+
+    st.dataframe(data_expiration_dates.style.apply(color_row, axis=1),
+                 hide_index=True,
+                 column_order= cols,
+                 column_config={
+                     "caducado" : None,
+                     "dias_para_caducar" : "Días hasta caducidad",
+                     "fecha_caducidad" : "Fecha de caducidad",
+                     "id" : "ID",
+                     "reactivo" : "Reactivo"
+                 })
