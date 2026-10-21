@@ -231,6 +231,7 @@ def load_inventory():
     df["bajo_stock"] = df["cantidad"] < df["stock_minimo"]
     df["caducado"] = df["fecha_caducidad"] < date.today()
     df["stock_ud"] = df.loc[:, ["cantidad", "estado"]].apply(add_units, axis = 1)
+    df["stock_minimo_ud"] = df.loc[:, ["stock_minimo", "estado"]].apply(add_units, axis = 1)
     df["cantidad_comercial_ud"] = df.loc[:, ["cantidad_comercial", "estado"]].apply(add_units, axis = 1)
     df = df.rename(
         columns={
@@ -244,7 +245,6 @@ def load_inventory():
     df["picto_url"] = "/app/static/" + df["picto_url"].astype(str)
 
     return df
-
 
 # Cargamos una copia limpia en cada ejecución
 df = load_inventory().copy()
@@ -326,8 +326,6 @@ with st.sidebar:
     if st.toggle(label="Productos cadudados"):
         mask &= filtered_df.caducado
 
-    
-
 #######################
 ######## TABS ######
 #######################
@@ -358,7 +356,7 @@ with tabs["Inventario"]:
                    )
     
     if len(filtered_df) == 0:
-        st.markdown("### No existen productos que cumplan el filtro actual.")
+        st.info("No existen productos que cumplan el filtro actual.")
     else:
         cart = st.container(horizontal=True, horizontal_alignment="left", 
                             vertical_alignment="center")
@@ -371,16 +369,20 @@ with tabs["Inventario"]:
             filtered_df,
             hide_index=True,
             column_order=[
+                "id",
                 "reactivo",
                 "pureza_pct",
                 "stock_ud",
+                "stock_minimo",
                 "fecha_caducidad",
                 "ficha_url",
                 "picto_url",
             ],
             column_config={
+                "id" : "ID",
                 "reactivo" : "Reactivo",
                 "stock_ud": "Cantidad actual",
+                "stock_minimo" : "Stock mínimo",
                 "pureza_pct": st.column_config.ProgressColumn(
                     "Pureza", min_value=90, max_value=100, format="%d %%"
                 ),
@@ -436,24 +438,24 @@ with tabs["Inventario"]:
                 st.session_state.table_counter += 1
                 st.rerun()
 
-            # KPI's
-            with st.container(horizontal=True):
-                KPI_WIDTH = "content"  # o 250, o "stretch"
+        # KPI's
+        with st.container(horizontal=True):
+            KPI_WIDTH = "content"  # o 250, o "stretch"
 
-                kpi_values = {
-                    "Reactivos mostrados:": f"{len(df[mask])} / {len(df)}",
-                    "Reactivos con bajo stock:": f"{len(df[df.bajo_stock])} / {len(df)}",
-                    "Reactivos caducados:": f"{len(df[df.caducado])} / {len(df)}",
-                }
+            kpi_values = {
+                "Reactivos mostrados:": f"{len(df[mask])} / {len(df)}",
+                "Reactivos con bajo stock:": f"{len(df[df.bajo_stock])} / {len(df)}",
+                "Reactivos caducados:": f"{len(df[df.caducado])} / {len(df)}",
+            }
 
-                cols = st.columns(len(kpi_values))
-                for col, (label, value) in zip(cols, kpi_values.items()):
-                    col.metric(label, value, width=KPI_WIDTH)
+            cols = st.columns(len(kpi_values))
+            for col, (label, value) in zip(cols, kpi_values.items()):
+                col.metric(label, value, width=KPI_WIDTH)
 
 with tabs["Pedido"]:
 
     if len(st.session_state.order_dict) == 0:
-        st.markdown("### Sin artículos añadidos al pedido.")
+        st.info("Sin artículos añadidos al pedido.")
 
     else:
 
@@ -585,7 +587,7 @@ with tabs["Editar stock"] :
     # para poder editar la cantidad
     df_stock = df[mask].copy()
     if len(df_stock) == 0:
-        st.markdown("### No existen productos que cumplan el filtro actual.")
+        st.info("No existen productos que cumplan el filtro actual.")
     else:
         parts = df_stock.stock_ud.str.split(expand=True)
         df_stock["unidades_reactivo"] = parts[1]
@@ -627,3 +629,50 @@ with tabs["Editar stock"] :
                                 mime="text/csv"):
                     load_inventory.clear()
 
+with tabs["Detalle"]:
+    st.markdown("### Selecciona un reactivo a partir de su valor de ID")
+
+    option_strings = df[mask].apply(lambda row: f"{row.id} - {row.reactivo}", axis=1)
+    if len(option_strings) == 0:
+        st.info("No existen reactivos que cumplan con el filtro actual.")
+    else:
+        selected_id = st.selectbox(label = "ID reactivo",
+                                options = option_strings,
+                                placeholder="ID de reactivo",
+                                index = None)
+
+        if selected_id:
+
+            selected_id = selected_id.split()[0]
+            id_info = df.loc[df.id == selected_id].squeeze().to_dict()
+
+            fecha_cad = pd.to_datetime(id_info["fecha_caducidad"], format="%d-%m-%Y").date()
+
+            # si está caducado
+            if id_info["caducado"]:
+                days_expired = ( date.today() - fecha_cad).days
+            
+            with st.container(horizontal=True, vertical_alignment="center"):
+            
+                st.image(image = id_info["picto_url"])
+                st.metric(label = "Masa molar, g/mol", value = id_info["masa_molar"])
+                st.metric(label = "Stock", value = id_info["stock_ud"],
+                        delta = id_info["cantidad"] - id_info["stock_minimo"], delta_color="normal")
+                st.metric(label = "Pureza, % masa", value = id_info["pureza_pct"])
+                if id_info["caducado"]:
+                    st.warning(f"El reactivo está caducado. Fecha caducidad: {fecha_cad:%d-%m-%Y}. {days_expired} días caducado.")
+
+with tabs["Gráficos"]:
+
+    datos_barchart = df.copy()
+    datos_barchart["valor"] = datos_barchart.cantidad / 100 * datos_barchart.precio_100
+    value_by_category = (datos_barchart.groupby("categoria").valor
+                         .sum()
+                         .to_frame()
+                         .reset_index() )
+
+    st.bar_chart(data = value_by_category,
+                 x = "categoria", y = "valor",
+                 x_label = "Categoría reactivo",
+                 y_label = "Valor (€)",
+                 horizontal=True, sort="valor")

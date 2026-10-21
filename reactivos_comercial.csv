@@ -1,5 +1,5 @@
 id,reactivo,formula,categoria,estado,masa_molar,pureza_pct,cantidad,unidad,stock_minimo,precio_100,cantidad_comercial,precio_unitario,ubicacion,peligro,fecha_caducidad,ficha_url,picto_url
-R001,Ácido clorhídrico 37%,HCl,Ácido,Líquido,36.46,95.1,817,mL,250,10.15,1000,14.5,Armario ácidos,Corrosivo,2030-03-26,fichas/acido_clorhidrico_37.pdf,pictogramas/corrosivo.png
+R001,Ácido clorhídrico 37%,HCl,Ácido,Líquido,36.46,95.1,820,mL,550,10.15,1000,14.5,Armario ácidos,Corrosivo,2030-03-26,fichas/acido_clorhidrico_37.pdf,pictogramas/corrosivo.png
 R002,Ácido sulfúrico 96%,H2SO4,Ácido,Líquido,98.08,97.1,918,mL,1000,21.04,1000,24.8,Armario ácidos,Corrosivo,2025-12-16,fichas/acido_sulfurico_96.pdf,pictogramas/corrosivo.png
 R003,Ácido nítrico 65%,HNO3,Ácido,Líquido,63.01,98.9,563,mL,500,31.87,1000,26.5,Armario ácidos,Corrosivo,2025-08-29,fichas/acido_nitrico_65.pdf,pictogramas/corrosivo.png
 R004,Ácido acético glacial,CH3COOH,Ácido,Líquido,60.05,96.1,240,mL,250,34.71,1000,22.9,Armario inflamables,Inflamable,2027-09-24,fichas/acido_acetico_glacial.pdf,pictogramas/inflamable.png
