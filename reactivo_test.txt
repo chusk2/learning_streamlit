@@ -1,4 +1,4 @@
-nuevo_reactivo_test = {
+reactivo_test = [{
     "id": "R035",
     "reactivo": "Ácido fosfórico 85%",
     "formula": "H3PO4",
@@ -17,4 +17,25 @@ nuevo_reactivo_test = {
     "fecha_caducidad": "2029-03-15",     # mismo formato ISO que tu CSV
     "ficha_url": "fichas/acido_fosforico_85.pdf",
     "picto_url": "pictogramas/corrosivo.png",
-}
+},
+{
+    "id": "R036",
+    "reactivo": "Tiosulfato de sodio pentahidratado",
+    "formula": "Na2S2O3·5H2O",
+    "categoria": "Sal",
+    "estado": "Sólido",
+    "masa_molar": 248.18,
+    "pureza_pct": 99.5,
+    "cantidad": 450,
+    "unidad": "g",
+    "stock_minimo": 200,
+    "precio_100": 4.40,
+    "cantidad_comercial": 500,
+    "precio_unitario": 22.00,
+    "ubicacion": "Estantería general",
+    "peligro": "Ninguno",
+    "fecha_caducidad": "2030-09-30",
+    "ficha_url": "fichas/tiosulfato_de_sodio_pentahidratado.pdf",
+    "picto_url": "pictogramas/ninguno.png",
+},
+]

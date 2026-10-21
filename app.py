@@ -6,6 +6,7 @@ import unicodedata
 
 st.set_page_config(page_title="Mi app", page_icon="🧪", layout="wide")
 
+# definir ancho de la página
 st.markdown(
     """
     <style>
@@ -15,164 +16,8 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# CSS
-# st.markdown(
-#     """
-#     <style>
-#     /* Contenedor principal y tipografía */
-#     .block-container {
-#         padding-top: 2rem;
-#         padding-bottom: 2.5rem;
-#         max-width: 1400px;
-#     }
-
-#     h1 {
-#         font-weight: 800 !important;
-#         letter-spacing: -0.02em;
-#         background: linear-gradient(90deg, #0f172a 0%, #0d9488 100%);
-#         -webkit-background-clip: text;
-#         -webkit-text-fill-color: transparent;
-#         margin-bottom: 0.25rem !important;
-#     }
-
-#     h3 {
-#         color: #475569 !important;
-#         font-weight: 500 !important;
-#         margin-top: 0 !important;
-#         margin-bottom: 1.25rem !important;
-#     }
-
-#     /* Barra lateral */
-#     [data-testid="stSidebar"] {
-#         background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
-#         border-right: 1px solid #cbd5e1;
-#     }
-
-#     [data-testid="stSidebar"] h1 {
-#         font-size: 1.5rem !important;
-#         padding-bottom: 0.5rem;
-#         border-bottom: 2px solid #0d9488;
-#         margin-bottom: 1rem !important;
-#     }
-
-#     [data-testid="stSidebar"] .stButton > button {
-#         width: 100%;
-#         font-size: 0.85rem;
-#         padding: 0.35rem 0.75rem;
-#         margin-bottom: 0.5rem;
-#     }
-
-#     /* Pestañas (Tabs) */
-#     [data-baseweb="tab-list"] {
-#         gap: 8px;
-#         background-color: #e2e8f0;
-#         padding: 6px;
-#         border-radius: 12px;
-#         margin-bottom: 1rem;
-#     }
-
-#     [data-baseweb="tab"] {
-#         height: 40px;
-#         border-radius: 8px !important;
-#         padding: 0 18px !important;
-#         font-weight: 600 !important;
-#         color: #475569 !important;
-#         background-color: transparent !important;
-#         border: none !important;
-#         transition: all 0.2s ease;
-#     }
-
-#     [data-baseweb="tab"]:hover {
-#         color: #0f172a !important;
-#         background-color: rgba(255, 255, 255, 0.6) !important;
-#     }
-
-#     [aria-selected="true"][data-baseweb="tab"] {
-#         background-color: #ffffff !important;
-#         color: #0d9488 !important;
-#         box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
-#     }
-
-#     [data-baseweb="tab-highlight"] {
-#         display: none;
-#     }
-
-#     /* Tarjetas de métricas (st.metric) */
-#     [data-testid="stMetric"] {
-#         background: #ffffff;
-#         border: 1px solid #e2e8f0;
-#         border-left: 4px solid #0d9488;
-#         border-radius: 12px;
-#         padding: 1rem 1.25rem;
-#         box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-#         transition: transform 0.15s ease, box-shadow 0.15s ease;
-#     }
-
-#     [data-testid="stMetric"]:hover {
-#         transform: translateY(-2px);
-#         box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
-#     }
-
-#     [data-testid="stMetricLabel"] {
-#         font-size: 0.85rem !important;
-#         font-weight: 600 !important;
-#         color: #64748b !important;
-#         text-transform: uppercase;
-#         letter-spacing: 0.03em;
-#     }
-
-#     [data-testid="stMetricValue"] {
-#         font-size: 1.65rem !important;
-#         font-weight: 700 !important;
-#         color: #0f172a !important;
-#     }
-
-#     /* Tabla de datos (st.dataframe) */
-#     [data-testid="stDataFrame"] {
-#         border: 1px solid #e2e8f0;
-#         border-radius: 12px;
-#         overflow: hidden;
-#         box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
-#         background: #ffffff;
-#     }
-
-#     /* Botones y botón de descarga */
-#     .stButton > button,
-#     .stDownloadButton > button {
-#         border-radius: 8px !important;
-#         font-weight: 600 !important;
-#         border: 1px solid #cbd5e1 !important;
-#         background-color: #ffffff !important;
-#         color: #0f172a !important;
-#         padding: 0.45rem 1rem !important;
-#         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
-#         transition: all 0.18s ease !important;
-#     }
-
-#     .stButton > button:hover,
-#     .stDownloadButton > button:hover {
-#         border-color: #0d9488 !important;
-#         color: #0d9488 !important;
-#         background-color: #f0fdfa !important;
-#         transform: translateY(-1px);
-#         box-shadow: 0 4px 10px rgba(13, 148, 136, 0.12);
-#     }
-
-#     .stButton > button:active,
-#     .stDownloadButton > button:active {
-#         transform: translateY(0);
-#     }
-
-#     /* Inputs y desplegables en la barra lateral */
-#     [data-testid="stSidebar"] [data-baseweb="input"],
-#     [data-testid="stSidebar"] [data-baseweb="select"] > div {
-#         border-radius: 8px !important;
-#         background-color: #ffffff !important;
-#     }
-#     </style>
-#     """,
-#     unsafe_allow_html=True,
-# )
+# tema personalizado CSS
+# st.html("styles.css")
 
 # CSS para línea separadora
 st.markdown(
@@ -231,6 +76,43 @@ def add_units(row):
         return f"{cantidad} mL"
     else:
         return cantidad
+
+
+# Colorear filas de reactivo caducado
+    
+# colores
+dark_theme_enabled = st.context.theme.type == "dark"
+colour_pink = "background-color: #ffcdd2"
+
+if dark_theme_enabled:
+    red_colour = "background-color: rgba(255, 75, 75, 1)"
+    amber_colour = "background-color: rgba(230, 126, 0, 1)"
+else:
+    red_colour = "background-color: rgba(255, 75, 75, 1); color : #ffffff"
+    amber_colour = "background-color: rgba(230, 126, 0, 1); color: #ffffff"
+
+def expiration_color(dias_para_caducar):
+    """Estilo CSS según los días que faltan para caducar (número)."""
+    if dias_para_caducar < 0:
+        return red_colour
+    elif dias_para_caducar < 30:
+        return amber_colour
+    else:
+        return ""          # sin estilo
+
+
+def color_fecha_caducidad(df_):
+    """Colorea solo la celda fecha_caducidad, decidiendo con dias_para_caducar."""
+    def _estilos(col_fecha):
+        # col_fecha es la columna fecha_caducidad; el color sale de
+        # dias_para_caducar de las mismas filas (mismo índice)
+        return df_.loc[col_fecha.index, "dias_para_caducar"].map(expiration_color)
+    return df_.style.apply(_estilos, subset=["fecha_caducidad"])
+
+
+def color_fila_caducidad(row):
+    """Colorea la fila entera según dias_para_caducar."""
+    return [expiration_color(row["dias_para_caducar"])] * len(row)
 
 
 #######################
@@ -404,8 +286,7 @@ with tabs["Inventario"]:
     # dataframe filtrado
     filtered_df = (df[mask]
                    .sort_values("reactivo", key=lambda names: names.map(strip_accents))
-                   .reset_index()
-                   )
+                   .reset_index() )
     
     if len(filtered_df) == 0:
         st.info("No existen productos que cumplan el filtro actual.")
@@ -414,9 +295,11 @@ with tabs["Inventario"]:
         cart = st.container(horizontal=True, horizontal_alignment="right", 
                             vertical_alignment="center")
 
+        
+        
         # dataframe inventario
         event = st.dataframe(
-            filtered_df,
+            color_fecha_caducidad(filtered_df),
             hide_index=True,
             column_order=[
                 "id",
@@ -650,7 +533,7 @@ with tabs["Editar stock"] :
             
             edited_stock_df = st.data_editor(
                 df_stock,
-                width=600,
+                width=700,
                 hide_index=True,
                 column_order= ["id", "reactivo", "cantidad", "stock_minimo", "unidades_reactivo"],
                 column_config={
@@ -663,7 +546,7 @@ with tabs["Editar stock"] :
                 disabled = ["id", "reactivo", "unidades_reactivo"],
                 key ="stock_editor"
             )
-        with st.container(horizontal=True, vertical_alignment="center"):
+        with st.container(horizontal=True, horizontal_alignment="center"):
 
                 edited_reagents = len(st.session_state.stock_editor["edited_rows"])
                 if edited_reagents > 0:
@@ -735,14 +618,19 @@ with tabs["Estadísticas"]:
                  y_label = "Valor (€)",
                  horizontal=True, sort="valor")
 
-    st.markdown("### Comparación de stock actual y stock mínimo")
+    st.metric(label="Valor total del inventario", value=f"{data_plots.valor.sum():.2f} €")
+
+    st.markdown("### Comparativa para productos con bajo stock")
 
     # comparación stock sólidos
     st.markdown("#### Reactivos sólidos")
-    data_low_stock = df[(df.bajo_stock) & (df.estado == "Sólido")]
+    data_low_stock = (df[(df.bajo_stock) & (df.estado == "Sólido")]
+                      .rename(columns = {
+                          "cantidad" : "stock actual",
+                          "stock_minimo" : "stock mínimo"}))
     st.bar_chart(data = data_low_stock,
                  x = "reactivo",
-                 y = ["cantidad", "stock_minimo"],
+                 y = ["stock actual", "stock mínimo"],
                  x_label = "Reactivo",
                  y_label = "Cantidad",
                  stack = False
@@ -750,39 +638,20 @@ with tabs["Estadísticas"]:
 
     # comparación stock líquidos
     st.markdown("#### Reactivos líquidos")
-    data_low_stock = df[(df.bajo_stock) & (df.estado == "Líquido")]
+    data_low_stock = (df[(df.bajo_stock) & (df.estado == "Líquido")]
+                          .rename(columns = {
+                              "cantidad" : "stock actual",
+                              "stock_minimo" : "stock mínimo"}))
     st.bar_chart(data = data_low_stock,
-                 x = "reactivo",
-                 y = ["cantidad", "stock_minimo"],
-                 x_label = "Reactivo",
-                 y_label = "Cantidad",
-                 stack = False
-                 )
+                     x = "reactivo",
+                     y = ["stock actual", "stock mínimo"],
+                     x_label = "Reactivo",
+                     y_label = "Cantidad",
+                     stack = False
+                     )
 
     st.markdown("### Fechas de caducidad")
        
-    # Colorear filas de reactivo caducado
-
-    # colores
-    dark_theme_enabled = st.context.theme.type == "dark"
-    colour_pink = "background-color: #ffcdd2"
-
-    if dark_theme_enabled:
-        red_colour = "background-color: rgba(255, 75, 75, 1)"
-        amber_colour = "background-color: rgba(230, 126, 0, 1)"
-    else:
-        red_colour = "background-color: rgba(255, 75, 75, 1); color : #ffffff"
-        amber_colour = "background-color: rgba(230, 126, 0, 1); color: #ffffff"
-
-    def color_row(row):
-        if row["caducado"]:
-            row_colour = red_colour
-        elif row["dias_para_caducar"] < 30:
-            row_colour = amber_colour            
-        else:
-            row_colour = None
-        return [row_colour] * len(row)
-
     def etiqueta(texto, estilo):
         return f'<span style="{estilo}; padding: 2px 8px; border-radius: 4px;">{texto}</span>'
 
@@ -791,7 +660,7 @@ with tabs["Estadísticas"]:
     cols = ["id", "reactivo", "fecha_caducidad", "caducado", "dias_para_caducar"]
     data_expiration_dates = df[cols].sort_values("fecha_caducidad").reset_index()
 
-    st.dataframe(data_expiration_dates.style.apply(color_row, axis=1),
+    st.dataframe(color_fecha_caducidad(data_expiration_dates),
                  hide_index=True,
                  column_order= cols,
                  column_config={
@@ -808,8 +677,23 @@ with tabs["Nuevo reactivo"]:
     #    'cantidad_comercial', 'precio_unitario', 'ubicacion', 'peligro',
     #    'fecha_caducidad', 'ficha_url', 'picto_url']
 
+    # keys de los widgets del formulario de nuevo reactivo
+    NEW_REAGENT_KEYS = [
+        "nuevo_nombre", "nuevo_formula", "nuevo_categoria", "nuevo_estado",
+        "nuevo_masa_molar", "nuevo_pureza", "nuevo_cantidad", "nuevo_stock_minimo",
+        "nuevo_cantidad_comercial", "nuevo_precio_unitario", "nuevo_ubicacion",
+        "nuevo_peligro", "nuevo_caducidad",
+    ]
+ 
+    # Resetear el formulario ANTES de crear los widgets (tras guardar un reactivo).
+    # Borrar la key hace que el widget vuelva a su valor por defecto.
+    if st.session_state.pop("reset_nuevo_reactivo", False):
+        for k in NEW_REAGENT_KEYS:
+            st.session_state.pop(k, None)
+        st.toast("¡Datos del nuevo reactivo incorporados con éxito!", icon="✅")
+ 
     with st.form("new_reagent", border=True, enter_to_submit=False):  # deshabilita envío de formulario al pulsar Enter
-
+ 
         # calculo nuevo id para el nuevo reactivo
         id_ = f"R{str(max(df["id"].apply(lambda x: int(x[1:]) + 1))).zfill(3)}" # x[1:] excluye la "R"
         st.markdown(f"### 🧪 Nuevo reactivo &nbsp; `{id_}`")
@@ -818,8 +702,8 @@ with tabs["Nuevo reactivo"]:
         with st.container(border=True):
             st.markdown("**🏷️ Identificación**")
             c1, c2 = st.columns([3, 1])
-            name = c1.text_input("Reactivo", placeholder="p. ej. Ácido clorhídrico 37%")
-            formula = c2.text_input("Fórmula", placeholder="HCl")
+            name = c1.text_input("Reactivo", placeholder="p. ej. Ácido clorhídrico 37%", key="nuevo_nombre")
+            formula = c2.text_input("Fórmula", placeholder="HCl", key="nuevo_formula")
     
             c1, c2 = st.columns(2)
             categoria = c1.selectbox(
@@ -827,12 +711,14 @@ with tabs["Nuevo reactivo"]:
                 options=sorted(df["categoria"].dropna().unique(), key=strip_accents),
                 index=None,
                 placeholder="Selecciona categoría",
+                key="nuevo_categoria",
             )
             estado = c2.selectbox(
                 "Estado",
                 options=["Líquido", "Sólido", "Gas"],
                 index=None,
                 placeholder="Estado de agregación",
+                key="nuevo_estado",
             )
     
         # ── 2. Propiedades químicas ──────────────────────────────────────────────
@@ -842,28 +728,34 @@ with tabs["Nuevo reactivo"]:
             masa_molar = c1.number_input(
                 "Masa molar (g/mol)",
                 value=2.0, min_value=2.0, max_value=500.0, step=0.1, format="%.2f",
+                key="nuevo_masa_molar",
             )
             pureza_pct = c2.number_input(
                 "Pureza (%)",
                 value=90.0, min_value=0.1, max_value=100.0, step=0.1, format="%.1f",
+                key="nuevo_pureza",
             )
     
         # ── 3. Stock y compra ────────────────────────────────────────────────────
         with st.container(border=True):
             st.markdown("**📦 Stock y compra**")
             st.caption("Cantidades en **mL** para líquidos y en **g** para sólidos y gases.")
+
             c1, c2 = st.columns(2)
-            cantidad = c1.number_input("Cantidad en stock", value=1, min_value=1, max_value=5000)
-            stock_minimo = c2.number_input("Stock mínimo", value=1, min_value=1, max_value=5000)
+            cantidad = c1.number_input("Cantidad en stock", value=1, min_value=1, max_value=5000,
+                                      key="nuevo_cantidad")
+            stock_minimo = c2.number_input("Stock mínimo", value=1, min_value=1, max_value=5000,
+                                          key="nuevo_stock_minimo")
     
             c1, c2 = st.columns(2)
-            cantidad_comercial = c1.number_input(
-                "Formato comercial", value=1, min_value=1, max_value=5000,
+            cantidad_comercial = c1.number_input("Formato comercial", value=1, min_value=1, max_value=5000,
                 help="Cantidad que trae cada envase del proveedor",
+                key="nuevo_cantidad_comercial",
             )
             precio_unitario = c2.number_input(
                 "Precio por envase (€)",
                 value=0.1, min_value=0.1, max_value=500.0, step=0.1, format="%.2f",
+                key="nuevo_precio_unitario",
             )
     
         # ── 4. Almacenamiento y seguridad ────────────────────────────────────────
@@ -875,12 +767,14 @@ with tabs["Nuevo reactivo"]:
                 options=sorted(df["ubicacion"].dropna().unique(), key=strip_accents),
                 index=None,
                 placeholder="Armario / estante",
+                key="nuevo_ubicacion",
             )
             peligro = c2.selectbox(
                 "Peligro",
                 options=sorted(df["peligro"].dropna().unique(), key=strip_accents),
                 index=None,
                 placeholder="Categoría de peligro",
+                key="nuevo_peligro",
             )
             fecha_caducidad = c3.date_input(
                 "Caducidad",
@@ -888,8 +782,9 @@ with tabs["Nuevo reactivo"]:
                 # no añadir un reactivo ya caducado
                 min_value=date.today(),
                 format="DD/MM/YYYY",
+                key="nuevo_caducidad",
             )
-    
+
         submit = st.form_submit_button("💾 Guardar reactivo", type="primary", use_container_width=True)
 
     if submit:
@@ -951,10 +846,10 @@ with tabs["Nuevo reactivo"]:
         try:
             combined_df = pd.concat([source_df, pd.DataFrame(new_reagent, index=[0])], axis=0, ignore_index=True)
             combined_df.to_csv("reactivos_comercial.csv", index=False)
-            st.success("¡Datos del nuevo reactivo incorporados con éxito!")
-            # limpiar caché
+        
             load_inventory.clear()  # limpiar caché
-            time.sleep(2)
+            # marcar el formulario para resetearlo en la próxima ejecución
+            st.session_state["reset_nuevo_reactivo"] = True
             st.rerun()
 
         except Exception as e:
