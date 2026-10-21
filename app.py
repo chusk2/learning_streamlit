@@ -201,12 +201,26 @@ def limpiar_texto_reactivo():
 def limpiar_texto_formula():
     st.session_state.texto_formula = ""
 
+
+def reset_filters():
+        ss = st.session_state
+        ss["texto_reactivo"] = ""
+        ss["texto_formula"] = ""
+        ss["categorias_multiselect"] = []
+        ss["ubicacion_selectbox"] = "Todas"
+        ss["estado.radio"] = "Todos"
+        ss["masa_molar_slider"] = (df.masa_molar.min(), df.masa_molar.max())   # rango del df completo
+        ss["bajo_stock_checkbox"] = False
+        ss["caducados_toggle"] = False
+
+        
 def strip_accents(text):
     """Devuelve `text` (str) en minúsculas y sin tildes ni diéresis: "Ácido" -> "acido"."""
     # NFD separa cada letra de su tilde ("Á" -> "A" + "´"); luego se descartan
     # las tildes, que son caracteres de categoría "Mn" (marca diacrítica)
     decomposed = unicodedata.normalize("NFD", text)
     return "".join(c for c in decomposed if unicodedata.category(c) != "Mn").lower()
+
 
 def add_units(row):
     cantidad = row.iloc[0]
@@ -290,6 +304,7 @@ with st.sidebar:
         filtered_df.categoria.unique(),
         default=None,
         placeholder="Elige categoría(s) de reactivo...",
+        key="categorias_multiselect"
     )
     if categorias:
         mask &= filtered_df["categoria"].isin(categorias)
@@ -299,13 +314,18 @@ with st.sidebar:
         ["Todas"] + list(filtered_df["ubicacion"].unique()),
         index=0,
         placeholder="Elige ubicación del reactivo...",
+        key= "ubicacion_selectbox"
     )
+
     if ubicacion != "Todas":
         mask &= filtered_df.ubicacion == ubicacion
 
-    estado = st.radio(
-        "Estado de agregación", ["Todos", "Líquido", "Sólido"], horizontal=True
-    )
+    estado = st.radio("Estado de agregación",
+                      index = 0,
+                      options = ["Todos", "Líquido", "Sólido"],
+                      horizontal=True,
+                      key="estado.radio")
+
     if estado != "Todos":
         mask &= filtered_df.estado == estado
 
@@ -319,23 +339,46 @@ with st.sidebar:
         max_value=masa_max,
         value=(masa_min, masa_max),
         step=0.1,
-    )
+        key="masa_molar_slider")
 
     # filtrar la masa molar
     mask &= filtered_df["masa_molar"].between(*masa_molar)
 
     # reactivos con stock
-    productos_bajo_stock = st.checkbox("Productos con bajo stock")
+    productos_bajo_stock = st.checkbox("Productos con bajo stock", key="bajo_stock_checkbox")
     if productos_bajo_stock:
         mask &= filtered_df["bajo_stock"]
 
     # productos caducados
-    if st.toggle(label="Productos cadudados"):
+    if st.toggle(label="Productos cadudados", key="caducados_toggle"):
         mask &= filtered_df.caducado
 
     # reactivos filtrados
     st.metric(label = "Reactivos filtrados",
               value = df[mask].shape[0])
+
+    # LIMPIEZA DE FILTROS
+
+    # key="texto_reactivo"
+    # key="texto_formula"
+    # key="categorias_multiselect"
+    # key= "ubicacion_selectbox"
+    # key="estado.radio"
+    # key="masa_molar_slider"
+    # key="bajo_stock_checkbox"
+    # key="caducados_toggle"
+
+    FILTER_KEYS = [
+    "texto_reactivo", "texto_formula", "categorias_multiselect",
+    "ubicacion_selectbox", "estado.radio", "masa_molar_slider",
+    "bajo_stock_checkbox", "caducados_toggle",]
+
+    st.button(label = "Limpiar filtros", on_click=reset_filters)
+    
+
+
+
+
 #######################
 ######## TABS ######
 #######################
