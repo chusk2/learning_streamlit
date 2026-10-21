@@ -375,10 +375,6 @@ with st.sidebar:
 
     st.button(label = "Limpiar filtros", on_click=reset_filters)
     
-
-
-
-
 #######################
 ######## TABS ######
 #######################
@@ -402,6 +398,9 @@ tabs = {
 
 with tabs["Inventario"]:
 
+    st.title("Inventario de Productos Químicos")
+    st.write("Marca reactivos para añadir a un pedido.")
+
     # dataframe filtrado
     filtered_df = (df[mask]
                    .sort_values("reactivo", key=lambda names: names.map(strip_accents))
@@ -411,9 +410,8 @@ with tabs["Inventario"]:
     if len(filtered_df) == 0:
         st.info("No existen productos que cumplan el filtro actual.")
     else:
-        st.title("Inventario de Productos Químicos")
-
-        cart = st.container(horizontal=True, horizontal_alignment="left", 
+        
+        cart = st.container(horizontal=True, horizontal_alignment="right", 
                             vertical_alignment="center")
 
         # dataframe inventario
@@ -803,3 +801,166 @@ with tabs["Estadísticas"]:
                      "id" : "ID",
                      "reactivo" : "Reactivo"
                  })
+
+with tabs["Nuevo reactivo"]:
+    # ['id', 'reactivo', 'formula', 'categoria', 'estado', 'masa_molar',
+    #    'pureza_pct', 'cantidad', 'unidad', 'stock_minimo', 'precio_100',
+    #    'cantidad_comercial', 'precio_unitario', 'ubicacion', 'peligro',
+    #    'fecha_caducidad', 'ficha_url', 'picto_url']
+
+    with st.form("new_reagent", border=True, enter_to_submit=False):  # deshabilita envío de formulario al pulsar Enter
+
+        # calculo nuevo id para el nuevo reactivo
+        id_ = f"R{str(max(df["id"].apply(lambda x: int(x[1:]) + 1))).zfill(3)}" # x[1:] excluye la "R"
+        st.markdown(f"### 🧪 Nuevo reactivo &nbsp; `{id_}`")
+         
+        # ── 1. Identificación ────────────────────────────────────────────────────
+        with st.container(border=True):
+            st.markdown("**🏷️ Identificación**")
+            c1, c2 = st.columns([3, 1])
+            name = c1.text_input("Reactivo", placeholder="p. ej. Ácido clorhídrico 37%")
+            formula = c2.text_input("Fórmula", placeholder="HCl")
+    
+            c1, c2 = st.columns(2)
+            categoria = c1.selectbox(
+                "Categoría",
+                options=sorted(df["categoria"].dropna().unique(), key=strip_accents),
+                index=None,
+                placeholder="Selecciona categoría",
+            )
+            estado = c2.selectbox(
+                "Estado",
+                options=["Líquido", "Sólido", "Gas"],
+                index=None,
+                placeholder="Estado de agregación",
+            )
+    
+        # ── 2. Propiedades químicas ──────────────────────────────────────────────
+        with st.container(border=True):
+            st.markdown("**⚗️ Propiedades**")
+            c1, c2 = st.columns(2)
+            masa_molar = c1.number_input(
+                "Masa molar (g/mol)",
+                value=2.0, min_value=2.0, max_value=500.0, step=0.1, format="%.2f",
+            )
+            pureza_pct = c2.number_input(
+                "Pureza (%)",
+                value=90.0, min_value=0.1, max_value=100.0, step=0.1, format="%.1f",
+            )
+    
+        # ── 3. Stock y compra ────────────────────────────────────────────────────
+        with st.container(border=True):
+            st.markdown("**📦 Stock y compra**")
+            st.caption("Cantidades en **mL** para líquidos y en **g** para sólidos y gases.")
+            c1, c2 = st.columns(2)
+            cantidad = c1.number_input("Cantidad en stock", value=1, min_value=1, max_value=5000)
+            stock_minimo = c2.number_input("Stock mínimo", value=1, min_value=1, max_value=5000)
+    
+            c1, c2 = st.columns(2)
+            cantidad_comercial = c1.number_input(
+                "Formato comercial", value=1, min_value=1, max_value=5000,
+                help="Cantidad que trae cada envase del proveedor",
+            )
+            precio_unitario = c2.number_input(
+                "Precio por envase (€)",
+                value=0.1, min_value=0.1, max_value=500.0, step=0.1, format="%.2f",
+            )
+    
+        # ── 4. Almacenamiento y seguridad ────────────────────────────────────────
+        with st.container(border=True):
+            st.markdown("**🛡️ Almacenamiento y seguridad**")
+            c1, c2, c3 = st.columns(3)
+            ubicacion = c1.selectbox(
+                "Ubicación",
+                options=sorted(df["ubicacion"].dropna().unique(), key=strip_accents),
+                index=None,
+                placeholder="Armario / estante",
+            )
+            peligro = c2.selectbox(
+                "Peligro",
+                options=sorted(df["peligro"].dropna().unique(), key=strip_accents),
+                index=None,
+                placeholder="Categoría de peligro",
+            )
+            fecha_caducidad = c3.date_input(
+                "Caducidad",
+                value=None,
+                # no añadir un reactivo ya caducado
+                min_value=date.today(),
+                format="DD/MM/YYYY",
+            )
+    
+        submit = st.form_submit_button("💾 Guardar reactivo", type="primary", use_container_width=True)
+
+    if submit:
+        # campos obligatorios
+        obligatorios = {
+            "Reactivo": name,
+            "Fórmula": formula,
+            "Categoría": categoria,
+            "Estado": estado,
+            "Ubicación": ubicacion,
+            "Peligro": peligro,
+            "Caducidad": fecha_caducidad,
+        }
+
+        # campos no rellenos
+        faltan = [campo for campo, valor in obligatorios.items() if not valor]
+
+        if faltan:
+            st.error(f"Faltan campos obligatorios por rellenar: {', '.join(faltan)}")
+            st.stop()
+
+        unidad = "mL" if estado == "Líquido" else "g"
+        precio_100 = round(precio_unitario / cantidad_comercial * 100, 2)
+        pictograms_dict = df[["peligro", "picto_url"]].drop_duplicates().set_index("peligro").to_dict()["picto_url"]
+        picto_url = pictograms_dict.get(peligro, "")
+        ficha_url = ""
+    
+        # Ajusta las claves a los nombres reales de tus columnas
+        new_reagent = {
+            "id": id_,
+            "reactivo": name.strip(),
+            "formula": formula.strip(),
+            "categoria": categoria,
+            "estado": estado,
+            "masa_molar": masa_molar,
+            "pureza_pct": pureza_pct,
+            "cantidad": cantidad,
+            "unidad": unidad,
+            "stock_minimo": stock_minimo,
+            "cantidad_comercial": cantidad_comercial,
+            "precio_unitario": precio_unitario,
+            "precio_100": precio_100,
+            "ubicacion": ubicacion,
+            "peligro": peligro,
+            "picto_url": picto_url,
+            "fecha_caducidad": fecha_caducidad,
+            "ficha_url": ficha_url,
+        }
+
+        reagent_data = pd.Series(new_reagent)
+
+        # añadir al archivo csv
+        source_df = pd.read_csv("reactivos_comercial.csv")
+
+        # ajustar al formato del CSV: rutas sin prefijo, fecha como en el original
+        new_reagent["fecha_caducidad"] = new_reagent["fecha_caducidad"].strftime("%Y-%m-%d")  # usa el formato de tu CSV
+        new_reagent["picto_url"] = new_reagent["picto_url"].removeprefix("/app/static/")  # elimina el prefijo /app/static
+
+        try:
+            combined_df = pd.concat([source_df, pd.DataFrame(new_reagent, index=[0])], axis=0, ignore_index=True)
+            combined_df.to_csv("reactivos_comercial.csv", index=False)
+            st.success("¡Datos del nuevo reactivo incorporados con éxito!")
+            # limpiar caché
+            load_inventory.clear()  # limpiar caché
+            time.sleep(2)
+            st.rerun()
+
+        except Exception as e:
+            st.error(f"Error: {e}")
+        
+
+        
+        
+        

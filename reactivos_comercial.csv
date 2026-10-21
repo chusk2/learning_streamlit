@@ -33,3 +33,4 @@ R031,Zinc (granalla),Zn,Metal,Sólido,65.38,97.3,72,g,200,25.42,500,32.4,Estante
 R032,Cobre (lámina),Cu,Metal,Sólido,63.55,97.1,840,g,250,10.71,250,36.8,Estantería metales,Ninguno,2030-04-05,fichas/cobre_lamina.pdf,pictogramas/ninguno.png
 R033,Hierro (limaduras),Fe,Metal,Sólido,55.85,99.9,569,g,200,29.77,500,14.9,Armario inflamables,Inflamable,2029-02-04,fichas/hierro_limaduras.pdf,pictogramas/inflamable.png
 R034,Sodio metálico,Na,Metal,Sólido,22.99,95.6,364,g,500,11.27,250,89.0,Armario inflamables,Inflamable,2029-05-22,fichas/sodio_metalico.pdf,pictogramas/inflamable.png
+R035,Ácido fosfórico 85%,H3PO4,Ácido,Líquido,98.0,97.2,180,mL,250,2.14,1000,21.4,Armario ácidos,Corrosivo,2029-03-15,,pictogramas/corrosivo.png

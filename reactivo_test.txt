@@ -1,0 +1,20 @@
+nuevo_reactivo_test = {
+    "id": "R035",
+    "reactivo": "Ácido fosfórico 85%",
+    "formula": "H3PO4",
+    "categoria": "Ácido",
+    "estado": "Líquido",
+    "masa_molar": 98.00,
+    "pureza_pct": 97.2,
+    "cantidad": 180,
+    "unidad": "mL",
+    "stock_minimo": 250,
+    "precio_100": 2.14,                  # 21.40 € / 1000 mL × 100
+    "cantidad_comercial": 1000,
+    "precio_unitario": 21.40,
+    "ubicacion": "Armario ácidos",
+    "peligro": "Corrosivo",
+    "fecha_caducidad": "2029-03-15",     # mismo formato ISO que tu CSV
+    "ficha_url": "fichas/acido_fosforico_85.pdf",
+    "picto_url": "pictogramas/corrosivo.png",
+}
